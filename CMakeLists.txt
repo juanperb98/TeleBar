@@ -9,7 +9,7 @@ set(CLIENT_TARGET
 )
 
 set(SERVER_TARGET
-    app/src/server.cpp
+    app/src/mainServer.cpp
 )
 
 set(TESTS_TARGET
@@ -26,13 +26,26 @@ set(SERVER_SOURCES
 set(COMMON_SOURCES
 )
 
-include_directories("${CMAKE_SOURCE_DIR}/include")
+
+
 
 add_executable(server ${SERVER_TARGET} ${SERVER_SOURCES} ${COMMON_SOURCES})
 add_executable(client ${CLIENT_TARGET} ${CLIENT_SOURCES} ${COMMON_SOURCES})
 # add_executable(tests ${TEST_TARGET} ${CLIENT_SOURCES} ${SERVER_SOURCES} ${COMMON_SOURCES})
 
+
+target_include_directories(server
+    PRIVATE
+    ${PROJECT_SOURCE_DIR}/app/include
+)
+
 target_include_directories(client
     PRIVATE
-       ${PROJECT_SOURCE_DIR}/app/include
+    ${PROJECT_SOURCE_DIR}/app/include
 )
+
+#target_include_directories(tests
+#    PRIVATE
+#    ${PROJECT_SOURCE_DIR}/app/include
+#)
+
