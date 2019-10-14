@@ -5,7 +5,7 @@ project (TeleBar)
 enable_testing()
 
 set(CLIENT_TARGET
-    app/src/client.cpp
+    app/src/mainClient.cpp
 )
 
 set(SERVER_TARGET
@@ -17,6 +17,7 @@ set(TESTS_TARGET
 )
 
 set(CLIENT_SOURCES
+    app/src/kernel/Client.cpp
 )
 
 set(SERVER_SOURCES
@@ -30,3 +31,8 @@ include_directories("${CMAKE_SOURCE_DIR}/include")
 add_executable(server ${SERVER_TARGET} ${SERVER_SOURCES} ${COMMON_SOURCES})
 add_executable(client ${CLIENT_TARGET} ${CLIENT_SOURCES} ${COMMON_SOURCES})
 # add_executable(tests ${TEST_TARGET} ${CLIENT_SOURCES} ${SERVER_SOURCES} ${COMMON_SOURCES})
+
+target_include_directories(client
+    PRIVATE
+       ${PROJECT_SOURCE_DIR}/app/include
+)
