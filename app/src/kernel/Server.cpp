@@ -42,7 +42,7 @@ Server::Server(int portno, handlerType requestHandler) {
 }
 
 bool Server::handdleNextConnection() {
-
+    std::cout<< "handling connection\n";
     fd_set clients_fd_aux = this->clients_fd;
 
     int output;
@@ -53,9 +53,11 @@ bool Server::handdleNextConnection() {
         NULL,
         NULL
     );
+    std::cout<< "handling connection2\n";
 
     if (output <= 0) // there is no requests
         return false;
+    std::cout<< "handling connection3\n";
 
     for (size_t i = 0; i < FD_SETSIZE; ++i) {
         if (FD_ISSET(i, &clients_fd_aux)) {
@@ -75,6 +77,8 @@ bool Server::handdleNextConnection() {
 
 bool Server::createNewSessionForClient() {
     serverClient client;
+
+    std::cout << "creating new client\n";
 
     int client_addr;
     socklen_t client_addr_length = sizeof(client_addr);

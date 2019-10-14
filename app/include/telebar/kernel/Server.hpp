@@ -13,6 +13,7 @@
 #include <time.h>
 #include <arpa/inet.h>
 #include <string.h>
+#include <iostream>
 
 #include <telebar/entity/User.hpp>
 

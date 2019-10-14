@@ -5,6 +5,9 @@ std::string handler(std::string test){ std::cout<<test<<"\n"; return "OK";};
 
 int main() {
     Server server(7707, handler);
-    server.handdleNextConnection();
+    while (true){
+        server.handdleNextConnection();
+        sleep(1);
+    }
 
 }
