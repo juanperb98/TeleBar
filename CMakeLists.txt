@@ -5,11 +5,11 @@ project (TeleBar)
 enable_testing()
 
 set(CLIENT_TARGET
-    app/src/client.cpp
+    app/src/mainClient.cpp
 )
 
 set(SERVER_TARGET
-    app/src/server.cpp
+    app/src/mainServer.cpp
 )
 
 set(TESTS_TARGET
@@ -17,6 +17,7 @@ set(TESTS_TARGET
 )
 
 set(CLIENT_SOURCES
+    app/src/kernel/Client.cpp
 )
 
 set(SERVER_SOURCES
@@ -47,3 +48,4 @@ target_include_directories(client
 #    PRIVATE
 #    ${PROJECT_SOURCE_DIR}/app/include
 #)
+
