@@ -35,6 +35,7 @@ bool Client::sendMessage(const std::string& payload) {
 
 std::string Client::listen() {
     char buffer_c[255];
+    bzero(buffer_c, 255);
     recv(
             this->socket_fd,
             buffer_c,

@@ -17,6 +17,7 @@ set(TESTS_TARGET
 )
 
 set(CLIENT_SOURCES
+    app/src/kernel/Client.cpp
 )
 
 set(SERVER_SOURCES
@@ -49,3 +50,4 @@ target_include_directories(client
 #    PRIVATE
 #       ${PROJECT_SOURCE_DIR}/app/include
 #)
+
