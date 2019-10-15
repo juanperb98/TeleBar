@@ -46,7 +46,7 @@ Server::Server(int portno, handlerType requestHandler) {
     FD_SET(0,&this->clients_fds);
 }
 
-bool Server::handdleNextConnection() {
+bool Server::handleNextConnection() {
     fd_set clients_fds_aux = this->clients_fds;
 
     int output;

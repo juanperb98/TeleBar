@@ -42,7 +42,7 @@ public:
     int getNumberOfClients() const;
 
 public:
-    bool handdleNextConnection();
+    bool handleNextConnection();
 
 private:
     bool createNewSessionForClient();
