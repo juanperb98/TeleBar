@@ -15,6 +15,9 @@ Server::Server(int portno, handlerType requestHandler) {
             0
     );
 
+    int on=1;
+    setsockopt( this->server_fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
+
     {
         int bind_payload = bind(
                 this->server_fd,
@@ -23,62 +26,61 @@ Server::Server(int portno, handlerType requestHandler) {
         );
 
         if (bind_payload == -1) {
-            fprintf(stderr, "ERROR: unable to bind socket");
+            fprintf(stderr, "ERROR: unable to bind socket.\n");
             close(this->server_fd);
+            exit(1);
         }
     }
     {
-        int ret_val = listen(this->server_fd, 1);
+        int ret_val = listen(this->server_fd, 10);
 
         if (ret_val == -1) {
-            fprintf(stderr, "ERROR, could not set the socket to listen");
+            fprintf(stderr, "ERROR, could not set the socket to listen.\n");
             close(this->server_fd);
+            exit(2);
         }
     }
 
-    FD_ZERO(&this->clients_fd);
-    FD_SET(this->server_fd,&this->clients_fd);
-    FD_SET(0,&this->clients_fd);
+    FD_ZERO(&this->clients_fds);
+    FD_SET(this->server_fd,&this->clients_fds);
+    FD_SET(0,&this->clients_fds);
 }
 
 bool Server::handdleNextConnection() {
-    std::cout<< "handling connection\n";
-    fd_set clients_fd_aux = this->clients_fd;
+    fd_set clients_fds_aux = this->clients_fds;
 
     int output;
     output = select(
         FD_SETSIZE,
-        &clients_fd_aux,
+        &clients_fds_aux,
         NULL,
         NULL,
         NULL
     );
-    std::cout<< "handling connection2\n";
 
     if (output <= 0) // there is no requests
         return false;
-    std::cout<< "handling connection3\n";
+
 
     for (size_t i = 0; i < FD_SETSIZE; ++i) {
-        if (FD_ISSET(i, &clients_fd_aux)) {
+        if (FD_ISSET(i, &clients_fds_aux)) {
 
             // new client is requesting a session
             if (i == this->server_fd)
                 return this->createNewSessionForClient();
 
             // already connected client is sending a payload
-            else if (i == 0) {
-
-            }
+            else
+                return this->handleConnectionFromClient(i);
         }
     }
     return true;
 }
 
 bool Server::createNewSessionForClient() {
-    serverClient client;
+    std::cout<<"accepting connection\n";
 
-    std::cout << "creating new client\n";
+    serverClient client;
 
     int client_addr;
     socklen_t client_addr_length = sizeof(client_addr);
@@ -112,17 +114,83 @@ bool Server::createNewSessionForClient() {
      // adds the client to the FD set and client list with out the token, as he must log in or create an User to
      // continue
     this->clients.push_back(client);
-    FD_SET(client.socket_fd, &clients_fd);
+    FD_SET(client.socket_fd, &clients_fds);
 
     this->buffer = "Welcome, please, log in or register now.";
+    /*send(
+            client.socket_fd,
+            this->buffer.c_str(),
+            strlen(this->buffer.c_str()),
+            0
+    );*/
+    return true;
+}
+
+bool Server::handleConnectionFromClient(int client_fd) {
+    int socket_fd = -1;
+    int client_addr;
+    socklen_t client_addr_length = sizeof(client_addr);
+
+    char buffer_c[255];
+    bzero(buffer_c, 255);
+    {
+        int received = recv(
+                client_fd,
+                &buffer_c,
+                255,
+                0
+        );
+
+        if (received == 0){
+            return true;
+        }
+    }
+
+
+
+    serverClient client {User(), -1};
+
+    for (int i = 0; i < this->getNumberOfClients(); ++i) {
+        if (this->clients[i].socket_fd == client_fd) {
+            client = this->clients[i];
+        }
+    }
+
+    if (client.socket_fd == -1){
+        fprintf(stderr, "ERROR, client was lost.\n");
+        return false;
+    }
+
+    this->buffer = this->handler(buffer_c);
+
+    if (strcmp(buffer_c, "EXIT") == 0)
+        return handleClientExit(client.socket_fd);
+
     send(
             client.socket_fd,
             this->buffer.c_str(),
             strlen(this->buffer.c_str()),
             0
     );
+
     return true;
 }
+
+
+bool Server::handleClientExit(int client_fd) {
+    std::vector<serverClient>::iterator it;
+    for (it = this->clients.begin(); it != this->clients.end() ; it++) {
+        if (it->socket_fd == client_fd) {
+            std::cout<<"closing connection\n";
+            close(client_fd);
+            FD_CLR(client_fd,&this->clients_fds);
+            this->clients.erase(it);
+            return true;
+        }
+    }
+    return false;
+}
+
 
 int Server::getClientCap() const {
     return this->clientCap;
@@ -137,3 +205,7 @@ void Server::setClientCap(int cap) {
 int Server::getNumberOfClients() const {
     return this->clients.size();
 }
+
+
+
+

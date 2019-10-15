@@ -23,4 +23,6 @@ public:
 
     std::string listen();
 
+    bool closeConnection();
+
 };

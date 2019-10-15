@@ -31,7 +31,7 @@ private:
     sockaddr_in server;
     std::string buffer;
     std::vector<serverClient> clients;
-    fd_set clients_fd;
+    fd_set clients_fds;
     handlerType handler;
     int clientCap;
 
@@ -46,6 +46,8 @@ public:
 
 private:
     bool createNewSessionForClient();
+    bool handleConnectionFromClient(int client_fd);
+    bool handleClientExit(int client_fd);
 
 };
 
