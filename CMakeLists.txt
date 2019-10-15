@@ -21,9 +21,11 @@ set(CLIENT_SOURCES
 )
 
 set(SERVER_SOURCES
+    app/src/kernel/Server.cpp
 )
 
 set(COMMON_SOURCES
+    app/src/entity/User.cpp
 )
 
 
@@ -36,16 +38,16 @@ add_executable(client ${CLIENT_TARGET} ${CLIENT_SOURCES} ${COMMON_SOURCES})
 
 target_include_directories(server
     PRIVATE
-    ${PROJECT_SOURCE_DIR}/app/include
+        ${PROJECT_SOURCE_DIR}/app/include
 )
 
 target_include_directories(client
     PRIVATE
-    ${PROJECT_SOURCE_DIR}/app/include
+        ${PROJECT_SOURCE_DIR}/app/include
 )
 
 #target_include_directories(tests
 #    PRIVATE
-#    ${PROJECT_SOURCE_DIR}/app/include
+#       ${PROJECT_SOURCE_DIR}/app/include
 #)
 

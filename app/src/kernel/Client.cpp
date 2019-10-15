@@ -27,7 +27,7 @@ bool Client::sendMessage(const std::string& payload) {
     send(
             this->socket_fd,
             payload.c_str(),
-            sizeof(payload.c_str()),
+            strlen(payload.c_str()),
             0
     );
     return true;
@@ -44,4 +44,9 @@ std::string Client::listen() {
     );
 
     return std::string(buffer_c);
+}
+
+bool Client::closeConnection() {
+    this->sendMessage("EXIT");
+    return true;
 }
