@@ -44,6 +44,7 @@ Server::Server(int portno, handlerType requestHandler) {
     FD_ZERO(&this->clients_fds);
     FD_SET(this->server_fd,&this->clients_fds);
     FD_SET(0,&this->clients_fds);
+    FD_CLR(STDIN_FILENO, &this->clients_fds);
 }
 
 bool Server::handleNextConnection() {
