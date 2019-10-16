@@ -3,8 +3,8 @@
 
 class SerializableInterface{
 public:
-    virtual std::string serialize() = 0;
-    virtual void deserialize(std::string stream) = 0;
+    virtual std::string serialize() const = 0;
+    virtual bool deserialize(std::string stream) = 0;
 };
 
 #endif
