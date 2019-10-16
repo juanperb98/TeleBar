@@ -1,20 +1,17 @@
-#ifndef _TELEBAR_KERNEL_CLIENT_
-#define _TELEBAR_KERNEL_CLIENT_
+#ifndef _TELEBAR_ENTITY_CLIENT_
+#define _TELEBAR_ENTITY_CLIENT_
 
 #include <string>
-#include <stdio.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
-#include <stdlib.h>
 #include <unistd.h>
-#include <string.h>
-#include <time.h>
 
 #include <telebar/utils/SerializableInterface.hpp>
+#include <telebar/utils/serializableUtils.hpp>
 
-class User{
+class User : public SerializableInterface{
 private:
     std::string username;
     std::string password;
@@ -23,7 +20,9 @@ private:
 public:
     User();
 
-    User(std::string token, std::string username = "", std::string password = "");
+    User(std::string stream);
+
+    User(std::string token, std::string username, std::string password);
 
     const std::string &getUsername() const;
 
@@ -36,6 +35,16 @@ public:
     const std::string &getToken() const;
 
     void setToken(const std::string &token);
+
+    std::string serialize() const override;
+
+    bool deserialize(std::string stream) override;
+
+    bool authenticate();
+
+    bool operator==(const User& user) const;
+
+    bool operator==(const std::string& token) const;
 };
 
 #endif
