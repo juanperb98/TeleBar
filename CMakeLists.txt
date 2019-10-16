@@ -22,6 +22,7 @@ set(CLIENT_SOURCES
 
 set(SERVER_SOURCES
     app/src/kernel/Server.cpp
+    app/src/controller/dbController.cpp
 )
 
 set(COMMON_SOURCES
