@@ -1,9 +1,10 @@
 #include <iostream>
 
 #include <telebar/kernel/Client.hpp>
+#include <telebar/entity/User.hpp>
 
 int main(int argc, char const *argv[]) {
-    Client client("127.0.0.1", 7707);
+    /*Client client("127.0.0.1", 7707);
     client.sendMessage("hello from c1");
     std::cout <<client.listen()<<"\n";
     client.sendMessage("its me again, c1");
@@ -19,6 +20,12 @@ int main(int argc, char const *argv[]) {
     std::cout <<client2.listen()<<"\n";
     client2.sendMessage("ok bye from c2");
     std::cout <<client2.listen()<<"\n";
-    client2.closeConnection();
+    client2.closeConnection();*/
+
+    User user("token", "username", "password");
+    std::cout<<user.serialize()<<"\n";
+
+    User user2(user.serialize());
+    std::cout<<user2.serialize()<<"\n";
 }
 

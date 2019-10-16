@@ -3,17 +3,14 @@
 
 #include <string>
 #include <vector>
-#include <stdio.h>
-#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
 #include <unistd.h>
-#include <time.h>
 #include <arpa/inet.h>
-#include <string.h>
 #include <iostream>
+#include <string.h>
 
 #include <telebar/entity/User.hpp>
 
@@ -22,8 +19,8 @@ typedef std::string (*handlerType)(std::string);
 class Server{
 
     struct serverClient {
-        User client;
-        int socket_fd;
+        User client = User();
+        int socket_fd = -1;
     };
 
 private:

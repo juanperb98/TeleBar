@@ -148,7 +148,7 @@ bool Server::handleConnectionFromClient(int client_fd) {
 
 
 
-    serverClient client {User(), -1};
+    serverClient client;
 
     for (int i = 0; i < this->getNumberOfClients(); ++i) {
         if (this->clients[i].socket_fd == client_fd) {
