@@ -19,7 +19,7 @@ std::vector<std::tuple<std::string, std::string>> utils::getTouplesFromStream(st
     std::string tag;
     std::string value;
 
-    std::vector<std::tuple<std::string, std::string>> touples;
+    std::vector<std::tuple<std::string, std::string>> tuples;
 
 
     while (stream.size() > 1) {
@@ -41,8 +41,8 @@ std::vector<std::tuple<std::string, std::string>> utils::getTouplesFromStream(st
         tag = field.substr(0, tagDelimiterIndex);
         value = field.substr(tagDelimiterIndex + 1, stream.size() - 1);
 
-        touples.emplace_back(tag, value);
+        tuples.emplace_back(tag, value);
     }
 
-    return touples;
+    return tuples;
 }

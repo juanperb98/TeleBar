@@ -1,23 +1,23 @@
 version: "3"
 services:
 
-    # db:
-    #     hostname: db
-    #     image: postgres:latest
-    #     volumes:
-    #         - ./db/config/my-postgres.conf:/etc/postgresql/postgresql.conf:z
-    #         - ./db/data:/var/lib/postgresql/data:z
-    #     environment:
-    #         - POSTGRES_USER=admin
-    #         - POSTGRES_PASSWORD=password
+    db:
+        hostname: db
+        image: postgres:latest
+        # volumes:
+        #     - ./db/config/my-postgres.conf:/etc/postgresql/postgresql.conf:z
+        #     - ./db/data:/var/lib/postgresql/data:z
+        environment:
+            - POSTGRES_USER=admin
+            - POSTGRES_PASSWORD=password
 
     server:
         hostname: server
         build: .
         ports:
             - 0.0.0.0:7707:7707
-        # depends_on:
-            # - db
+        depends_on:
+            - db
         environment:
             - DB_USER=admin
             - DB_PASSWORD=password
