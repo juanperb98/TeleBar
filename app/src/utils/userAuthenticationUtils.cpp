@@ -1,6 +1,7 @@
 #include <telebar/utils/userAuthenticationUtils.hpp>
 
 std::string utils::getUserToken(const User& user) {
+    // TODO: finish db controller
     //auto raw_users_db = "select * from telebar.users where telebar.users.name == user.name and telebar.users.password == user.password";
     std::vector<User> users_db = {
             User("token_juanpe", "juanpe", "password"),
