@@ -1,13 +1,13 @@
-#include <telebar/utils/serializableUtils.hpp>
+#include <telebar/interface/SerializableInterface.hpp>
 
-std::vector<std::tuple<std::string, std::string>> utils::getTouplesFromStream(std::string stream) {
+const std::vector<std::tuple<std::string, std::string>>& SerializableInterface::getTuplesFromStream(std::string stream) {
     if (stream[0] != '{') {
         fprintf(stderr, "ERROR, could not deserialize User, expected '{' at the start of stream");
-        return std::vector<std::tuple<std::string, std::string>>();
+        return *(new std::vector<std::tuple<std::string, std::string>>());
     }
     if (stream[stream.size() - 1] != '}') {
         fprintf(stderr, "ERROR, could not deserialize User, expected '}' at the end of stream");
-        return std::vector<std::tuple<std::string, std::string>>();
+        return *(new std::vector<std::tuple<std::string, std::string>>());
     }
 
     stream = stream.substr(1, stream.size() - 2);
@@ -19,7 +19,7 @@ std::vector<std::tuple<std::string, std::string>> utils::getTouplesFromStream(st
     std::string tag;
     std::string value;
 
-    std::vector<std::tuple<std::string, std::string>> tuples;
+    auto tuples = new std::vector<std::tuple<std::string, std::string>>();
 
 
     while (stream.size() > 1) {
@@ -35,14 +35,14 @@ std::vector<std::tuple<std::string, std::string>> utils::getTouplesFromStream(st
         tagDelimiterIndex = field.find(':');
         if (tagDelimiterIndex == std::string::npos) {
             fprintf(stderr, "ERROR, could not deserialize User, expected ':' as tag:value separator");
-            return std::vector<std::tuple<std::string, std::string>>();
+            return *(new std::vector<std::tuple<std::string, std::string>>());
         }
 
         tag = field.substr(0, tagDelimiterIndex);
         value = field.substr(tagDelimiterIndex + 1, stream.size() - 1);
 
-        tuples.emplace_back(tag, value);
+        tuples->emplace_back(tag, value);
     }
 
-    return tuples;
+    return *tuples;
 }

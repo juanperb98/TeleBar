@@ -1,8 +1,7 @@
 #include <telebar/kernel/Server.hpp>
-#include <telebar/utils/userAuthenticationUtils.hpp>
 #include <iostream>
 
-std::string handler(std::string test){ std::cout<<test<<"\n"; return test+" | OK";};
+const std::string& handler(std::string test){ std::cout<<test<<"\n"; return test+" | OK";}
 
 int main() {
     User user("token_diego", "diego", "secret");

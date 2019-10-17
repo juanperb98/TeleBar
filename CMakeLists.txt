@@ -24,12 +24,12 @@ set(SERVER_SOURCES
     app/src/kernel/Server.cpp
     app/src/controller/dbController.cpp
     app/src/controller/securityController.cpp
-    app/src/utils/userAuthenticationUtils.cpp
 )
 
 set(COMMON_SOURCES
     app/src/entity/User.cpp
-    app/src/utils/serializableUtils.cpp
+    app/src/interface/SerializableInterface.cpp
+    app/src/utils/userAuthenticationUtils.cpp
 )
 
 

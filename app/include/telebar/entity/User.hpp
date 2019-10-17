@@ -8,21 +8,25 @@
 #include <netdb.h>
 #include <unistd.h>
 
-#include <telebar/utils/SerializableInterface.hpp>
-#include <telebar/utils/serializableUtils.hpp>
+#include <telebar/interface/SerializableInterface.hpp>
+#include <telebar/interface/ORMInterface.hpp>
 
-class User : public SerializableInterface{
+
+/**
+ * user entity class, it holds the information of an user, it can be serialized and stored in the database.
+ */
+class User : public SerializableInterface, public ORMInterface {
 private:
-    std::string username;
-    std::string password;
-    std::string token;
+    std::string username_;
+    std::string password_;
+    std::string token_;
 
 public:
     User();
 
-    User(std::string stream);
+    explicit User(const std::string& stream);
 
-    User(std::string token, std::string username, std::string password);
+    User(const std::string& token, const std::string& username, const std::string& password);
 
     const std::string &getUsername() const;
 

@@ -1,79 +1,80 @@
 #include <telebar/kernel/Server.hpp>
 
+
 Server::Server(int portno, handlerType requestHandler) {
-    this->clientCap = 50;
+    this->clientCap_ = 50;
+    this->bufferSize_ = 255;
 
-    this->server.sin_port = htons(portno);
-    this->server.sin_family = AF_INET;
-    this->server.sin_addr.s_addr = htonl(INADDR_ANY);
-    this->handler = requestHandler;
+    this->server_.sin_port = htons(portno);
+    this->server_.sin_family = AF_INET;
+    this->server_.sin_addr.s_addr = htonl(INADDR_ANY);
+    this->handler_ = requestHandler;
 
 
-    this->server_fd = socket(
-            this->server.sin_family,
+    this->server_fd_ = socket(
+            this->server_.sin_family,
             SOCK_STREAM,
             0
     );
 
     int on=1;
-    setsockopt( this->server_fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
+    setsockopt(this->server_fd_, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
 
     {
         int bind_payload = bind(
-                this->server_fd,
-                (struct sockaddr*) &this->server,
-                sizeof(this->server)
+                this->server_fd_,
+                (struct sockaddr*) &this->server_,
+                sizeof(this->server_)
         );
 
         if (bind_payload == -1) {
             fprintf(stderr, "ERROR: unable to bind socket.\n");
-            close(this->server_fd);
+            close(this->server_fd_);
             exit(1);
         }
     }
     {
-        int ret_val = listen(this->server_fd, 10);
+        int ret_val = listen(this->server_fd_, 10);
 
         if (ret_val == -1) {
             fprintf(stderr, "ERROR, could not set the socket to listen.\n");
-            close(this->server_fd);
+            close(this->server_fd_);
             exit(2);
         }
     }
 
-    FD_ZERO(&this->clients_fds);
-    FD_SET(this->server_fd,&this->clients_fds);
-    FD_SET(0,&this->clients_fds);
-    FD_CLR(STDIN_FILENO, &this->clients_fds);
+    FD_ZERO(&this->clients_fds_);
+    FD_SET(this->server_fd_, &this->clients_fds_);
+    FD_SET(0,&this->clients_fds_);
+    FD_CLR(STDIN_FILENO, &this->clients_fds_);
 }
 
 bool Server::handleNextConnection() {
-    fd_set clients_fds_aux = this->clients_fds;
+    fd_set clients_fds_aux = this->clients_fds_;
 
     int output;
     output = select(
         FD_SETSIZE,
         &clients_fds_aux,
-        NULL,
-        NULL,
-        NULL
+        nullptr,
+        nullptr,
+        nullptr
     );
 
     if (output <= 0) // there is no requests
         return false;
 
 
-    for (size_t i = 0; i < FD_SETSIZE; ++i) {
-        if (FD_ISSET(i, &clients_fds_aux)) {
+    for (int i = 0; i < FD_SETSIZE; ++i) {
+        if (!FD_ISSET(i, &clients_fds_aux)) continue;
 
-            // new client is requesting a session
-            if (i == this->server_fd)
-                return this->createNewSessionForClient();
+        // new client is requesting a session
+        if (i == this->server_fd_)
+            return this->createNewSessionForClient();
 
-            // already connected client is sending a payload
-            else
-                return this->handleConnectionFromClient(i);
-        }
+        // already connected client is sending a payload
+        else
+            return this->handleConnectionFromClient(i);
     }
     return true;
 }
@@ -88,7 +89,7 @@ bool Server::createNewSessionForClient() {
 
     // gets the request
     client.socket_fd = accept(
-            this->server_fd,
+            this->server_fd_,
             (sockaddr*) &client_addr,
             &client_addr_length
     );
@@ -99,11 +100,13 @@ bool Server::createNewSessionForClient() {
 
     // checks if the client cap has been reached
     if (this->getNumberOfClients() > this->getClientCap()) {
-        this->buffer = "Sorry, but the client cap has been reached, please, try again later.";
+        char buffer[this->bufferSize_];
+        bzero(buffer, this->bufferSize_);
+        strcpy(buffer, "Sorry, but the client cap has been reached, please, try again later.");
         send(
                 client.socket_fd,
-                this->buffer.c_str(),
-                strlen(this->buffer.c_str()),
+                buffer,
+                strlen(buffer),
                 0
         );
         close(client.socket_fd);
@@ -112,33 +115,36 @@ bool Server::createNewSessionForClient() {
 
      // lets get that client connected
 
-     // adds the client to the FD set and client list with out the token, as he must log in or create an User to
+     // adds the client to the FD set and client list with out the token_, as he must log in or create an User to
      // continue
-    this->clients.push_back(client);
-    FD_SET(client.socket_fd, &clients_fds);
+    this->clients_.push_back(client);
+    FD_SET(client.socket_fd, &clients_fds_);
 
-    this->buffer = "Welcome, please, log in or register now.";
-    /*send(
+    /*
+    bzero(buffer, this->bufferSize_);
+    strcpy(buffer, "Welcome, please, log in or register now.");
+    send(
             client.socket_fd,
-            this->buffer.c_str(),
-            strlen(this->buffer.c_str()),
+            buffer,
+            strlen(buffer),
             0
-    );*/
+    );
+    */
     return true;
 }
 
 bool Server::handleConnectionFromClient(int client_fd) {
-    int socket_fd = -1;
-    int client_addr;
-    socklen_t client_addr_length = sizeof(client_addr);
+    // int socket_fd = -1;
+    // int client_addr;
+    // socklen_t client_addr_length = sizeof(client_addr);
 
-    char buffer_c[255];
-    bzero(buffer_c, 255);
+    char buffer[this->bufferSize_];
+    bzero(buffer, this->bufferSize_);
     {
         int received = recv(
                 client_fd,
-                &buffer_c,
-                255,
+                &buffer,
+                this->bufferSize_,
                 0
         );
 
@@ -152,8 +158,8 @@ bool Server::handleConnectionFromClient(int client_fd) {
     serverClient client;
 
     for (int i = 0; i < this->getNumberOfClients(); ++i) {
-        if (this->clients[i].socket_fd == client_fd) {
-            client = this->clients[i];
+        if (this->clients_[i].socket_fd == client_fd) {
+            client = this->clients_[i];
         }
     }
 
@@ -162,15 +168,15 @@ bool Server::handleConnectionFromClient(int client_fd) {
         return false;
     }
 
-    this->buffer = this->handler(buffer_c);
+    std::string handledBuffer = this->handler_(buffer);
 
-    if (strcmp(buffer_c, "EXIT") == 0)
+    if (strcmp(buffer, "EXIT") == 0)
         return handleClientExit(client.socket_fd);
 
     send(
             client.socket_fd,
-            this->buffer.c_str(),
-            strlen(this->buffer.c_str()),
+            handledBuffer.c_str(),
+            strlen(handledBuffer.c_str()),
             0
     );
 
@@ -180,12 +186,12 @@ bool Server::handleConnectionFromClient(int client_fd) {
 
 bool Server::handleClientExit(int client_fd) {
     std::vector<serverClient>::iterator it;
-    for (it = this->clients.begin(); it != this->clients.end() ; it++) {
+    for (it = this->clients_.begin(); it != this->clients_.end() ; it++) {
         if (it->socket_fd == client_fd) {
             std::cout<<"closing connection\n";
             close(client_fd);
-            FD_CLR(client_fd,&this->clients_fds);
-            this->clients.erase(it);
+            FD_CLR(client_fd,&this->clients_fds_);
+            this->clients_.erase(it);
             return true;
         }
     }
@@ -194,17 +200,17 @@ bool Server::handleClientExit(int client_fd) {
 
 
 int Server::getClientCap() const {
-    return this->clientCap;
+    return this->clientCap_;
 }
 
 void Server::setClientCap(int cap) {
     if (cap < 1)
         return;
-    this->clientCap = cap;
+    this->clientCap_ = cap;
 }
 
 int Server::getNumberOfClients() const {
-    return this->clients.size();
+    return this->clients_.size();
 }
 
 
