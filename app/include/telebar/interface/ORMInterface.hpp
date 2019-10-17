@@ -2,17 +2,18 @@
 #define _TELEBAR_INTERFACE_ORMINTERFACE_
 
 #include <string>
-#include <telebar/entity/User.hpp>
 
-class ORMInterface{
-private:
-    int id;
-    std::string tablename;
+template <class Object>
+
+class ORMInterface {
+protected:
+    int id_;
+    std::string tablename_;
 
 public:
-    //virtual bool save() const = 0;
-    //static virtual std::vector<> all() const = 0;
-    //static virtual std::vector<> getById(int id) const = 0;
+    virtual bool save() const = 0;
+    static std::vector<Object> all() {return *(new std::vector<Object>);}; // TODO: this can be implemented in this class
+    static std::vector<Object> getById(int id) {return *(new std::vector<Object>);}; // TODO: This can be implemented in this class
 };
 
 #endif

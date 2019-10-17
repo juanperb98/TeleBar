@@ -11,11 +11,10 @@
 #include <telebar/interface/SerializableInterface.hpp>
 #include <telebar/interface/ORMInterface.hpp>
 
-
 /**
  * user entity class, it holds the information of an user, it can be serialized and stored in the database.
  */
-class User : public SerializableInterface, public ORMInterface {
+class User : public SerializableInterface, public ORMInterface<User>{
 private:
     std::string username_;
     std::string password_;
@@ -49,6 +48,8 @@ public:
     bool operator==(const User& user) const;
 
     bool operator==(const std::string& token) const;
+
+    bool save() const override;
 };
 
 #endif

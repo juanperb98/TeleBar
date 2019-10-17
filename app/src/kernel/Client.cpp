@@ -1,5 +1,6 @@
 #include <telebar/kernel/Client.hpp>
 
+
 Client::Client(const std::string& addr, int portno) {
     this->socket_fd_ = socket(AF_INET, SOCK_STREAM, 0);
     // TODO: if error

@@ -18,7 +18,7 @@
 /**
  * All the handlers must follow this type
  */
-typedef const std::string& (*handlerType)(std::string);
+typedef std::string (*handlerType)(std::string);
 
 
 /**

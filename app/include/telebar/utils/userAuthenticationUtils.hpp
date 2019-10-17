@@ -7,7 +7,7 @@
 
 #include <telebar/entity/User.hpp>
 
-namespace utils{
+namespace utils {
     std::string getUserToken(const User& user);
 
     unsigned int random_char();

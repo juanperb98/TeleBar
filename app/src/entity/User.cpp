@@ -1,6 +1,6 @@
 #include <telebar/entity/User.hpp>
-#include <telebar/utils/userAuthenticationUtils.hpp>
-#include <telebar/interface/ORMInterface.hpp>
+#include <telebar/utils/userAuthenticationUtils.hpp> // this is here as if it is added in the .hpp it creates a loop
+
 #include <iostream>
 
 const std::string &User::getUsername() const {
@@ -28,18 +28,22 @@ void User::setToken(const std::string &token) {
 }
 
 User::User(const std::string& stream) {
+    this->tablename_ = "userapp";
     this->deserialize(stream);
 }
+
 User::User(const std::string& token, const std::string& username, const std::string& password) {
-    User::token_ = token;
-    User::username_ = username;
-    User::password_ = password;
+    this->tablename_ = "userapp";
+    this->token_ = token;
+    this->username_ = username;
+    this->password_ = password;
 }
 
 User::User() {
-    User::token_ = "";
-    User::username_ = "";
-    User::password_ = "";
+    this->tablename_ = "userapp";
+    this->token_ = "";
+    this->username_ = "";
+    this->password_ = "";
 }
 
 std::string User::serialize() const {
@@ -74,5 +78,10 @@ bool User::operator==(const User &user) const {
 
 bool User::operator==(const std::string &token) const {
     return (this->token_ == token) && !this->token_.empty();
+}
+
+bool User::save() const {
+    // TODO: do the fucking thing
+    return false;
 }
 
