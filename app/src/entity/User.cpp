@@ -1,55 +1,54 @@
 #include <telebar/entity/User.hpp>
 #include <telebar/utils/userAuthenticationUtils.hpp>
-
+#include <telebar/interface/ORMInterface.hpp>
 #include <iostream>
 
 const std::string &User::getUsername() const {
-    return username;
+    return username_;
 }
 
 void User::setUsername(const std::string &username) {
-    User::username = username;
+    this->username_ = username;
 }
 
 const std::string &User::getPassword() const {
-    return password;
+    return password_;
 }
 
 void User::setPassword(const std::string &password) {
-    User::password = password;
+    this->password_ = password;
 }
 
 const std::string &User::getToken() const {
-    return token;
+    return token_;
 }
 
 void User::setToken(const std::string &token) {
-    User::token = token;
+    this->token_ = token;
 }
 
-User::User(std::string stream) {
+User::User(const std::string& stream) {
     this->deserialize(stream);
 }
-
-User::User(std::string token, std::string username, std::string password) {
-    User::token = token;
-    User::username = username;
-    User::password = password;
+User::User(const std::string& token, const std::string& username, const std::string& password) {
+    User::token_ = token;
+    User::username_ = username;
+    User::password_ = password;
 }
 
 User::User() {
-    User::token = "";
-    User::username = "";
-    User::password = "";
+    User::token_ = "";
+    User::username_ = "";
+    User::password_ = "";
 }
 
 std::string User::serialize() const {
-    return "{token:"+this->token+"|username:"+this->username+"|password:"+this->password+"}";
+    return "{token:" + this->token_ + "|username:" + this->username_ + "|password:" + this->password_ + "}";
 }
 
 bool User::deserialize(std::string stream) {
 
-    std::vector<std::tuple<std::string, std::string>> tuples = utils::getTouplesFromStream(stream);
+    std::vector<std::tuple<std::string, std::string>> tuples = this->getTuplesFromStream(stream);
 
     for (auto& tuple : tuples) {
         if (std::get<0>(tuple) == "token")
@@ -69,11 +68,11 @@ bool User::authenticate() {
 }
 
 bool User::operator==(const User &user) const {
-    return (this->username == user.username) && !this->username.empty() \
-        && (this->password == user.password) && !this->password.empty();
+    return (this->username_ == user.username_) && !this->username_.empty() \
+ && (this->password_ == user.password_) && !this->password_.empty();
 }
 
 bool User::operator==(const std::string &token) const {
-    return (this->token == token) && !this->token.empty();
+    return (this->token_ == token) && !this->token_.empty();
 }
 
