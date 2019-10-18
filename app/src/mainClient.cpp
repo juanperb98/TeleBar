@@ -22,10 +22,10 @@ int main(int argc, char const *argv[]) {
     std::cout <<client2.listen()<<"\n";
     client2.closeConnection();
 
-    User user("token", "username", "password");
+    /*User user("token", "username", "password");
     std::cout<<user.serialize()<<"\n";
 
     User user2(user.serialize());
-    std::cout<<user2.serialize()<<"\n";
+    std::cout<<user2.serialize()<<"\n";*/
 }
 

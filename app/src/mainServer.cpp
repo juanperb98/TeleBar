@@ -1,17 +1,18 @@
 #include <telebar/kernel/Server.hpp>
 #include <telebar/entity/User.hpp>
+#include <telebar/utils/ORM.hpp>
 #include <iostream>
+
+#define _SERVER_
 
 std::string handler(std::string test){ std::cout<<test<<"\n"; return test+" | OK";}
 
 int main() {
     User user("token_diego", "diego", "secret");
-    std::cout<<user.serialize()<<"\n";
 
-    User user2(user.serialize());
-    std::cout<<user2.serialize()<<"\n";
-    std::cout << user2.authenticate() << "\n";
-    std::cout<<user2.serialize()<<"\n";
+    ORM orm;
+    orm.createTable(user);
+    orm.save(user);
 
     Server server(7707, handler);
     server.setClientCap(5);

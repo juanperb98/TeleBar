@@ -1,6 +1,6 @@
 #include <telebar/interface/SerializableInterface.hpp>
 
-const std::vector<std::tuple<std::string, std::string>>& SerializableInterface::getTuplesFromStream(std::string stream) {
+const std::vector<std::tuple<std::string, std::string>>& SerializableInterface::getTuplesFromStream(std::string stream) const {
     if (stream[0] != '{') {
         fprintf(stderr, "ERROR, could not deserialize User, expected '{' at the start of stream");
         return *(new std::vector<std::tuple<std::string, std::string>>());

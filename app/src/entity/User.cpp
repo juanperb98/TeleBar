@@ -28,19 +28,22 @@ void User::setToken(const std::string &token) {
 }
 
 User::User(const std::string& stream) {
-    this->tablename_ = "userapp";
+    this->tableName_ = "userapp";
+    this->id_ = -1;
     this->deserialize(stream);
 }
 
 User::User(const std::string& token, const std::string& username, const std::string& password) {
-    this->tablename_ = "userapp";
+    this->tableName_ = "userapp";
+    this->id_ = -1;
     this->token_ = token;
     this->username_ = username;
     this->password_ = password;
 }
 
 User::User() {
-    this->tablename_ = "userapp";
+    this->tableName_ = "userapp";
+    this->id_ = -1;
     this->token_ = "";
     this->username_ = "";
     this->password_ = "";
@@ -78,10 +81,5 @@ bool User::operator==(const User &user) const {
 
 bool User::operator==(const std::string &token) const {
     return (this->token_ == token) && !this->token_.empty();
-}
-
-bool User::save() const {
-    // TODO: do the fucking thing
-    return false;
 }
 

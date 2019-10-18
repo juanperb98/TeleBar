@@ -3,13 +3,12 @@ services:
 
     db:
         hostname: db
-        image: postgres:latest
-        # volumes:
-        #     - ./db/config/my-postgres.conf:/etc/postgresql/postgresql.conf:z
-        #     - ./db/data:/var/lib/postgresql/data:z
+        image: mysql:latest
         environment:
-            - POSTGRES_USER=admin
-            - POSTGRES_PASSWORD=password
+            - MYSQL_DATABASE=telebar
+            - MYSQL_USER=admin
+            - MYSQL_PASSWORD=password
+            - MYSQL_RANDOM_ROOT_PASSWORD=yes
 
     server:
         hostname: server
@@ -21,5 +20,6 @@ services:
         environment:
             - DB_USER=admin
             - DB_PASSWORD=password
-            - DB_PORT=5432
+            - DB_PORT=3306
+            - DB_NAME=telebar
         command: bash -c "make server && ./server"
