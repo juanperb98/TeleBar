@@ -31,7 +31,6 @@ private:
             (*buffer) += ",";
         (*buffer) += "{";
         for(int i = 0; i<argc; i++) {
-            //printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
             if (i != 0)
                 (*buffer) += "|";
             (*buffer) += std::string(azColName[i]) + ":" + std::string(argv[i]);
@@ -63,8 +62,6 @@ public:
             querry += ", " + std::get<0>(tuples[i]) + " CHAR(255)";
         }
         querry += ");";
-
-        std::cout<<querry<<"\n";
 
         char *zErrMsg = 0;
         int rc;
@@ -100,9 +97,6 @@ public:
             querry += ", '" + std::get<1>(tuples[i]) + "'";
         }
         querry += ");";
-
-        std::cout<<querry<<"\n";
-
 
         char *zErrMsg = 0;
         int rc;
