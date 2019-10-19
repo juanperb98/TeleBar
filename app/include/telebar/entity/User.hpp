@@ -2,20 +2,20 @@
 #define _TELEBAR_ENTITY_CLIENT_
 
 #include <string>
+#include <stdlib.h>
+#include <cstring>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
 #include <unistd.h>
 
-#include <telebar/interface/SerializableInterface.hpp>
-#include <telebar/interface/ORMInterface.hpp>
-
+#include <telebar/utils/ORM.hpp>
 
 /**
  * user entity class, it holds the information of an user, it can be serialized and stored in the database.
  */
-class User : public SerializableInterface, public ORMInterface {
+class User : public ORMInterface {
 private:
     std::string username_;
     std::string password_;

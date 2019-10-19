@@ -9,7 +9,9 @@ class SerializableInterface{
 public:
     virtual std::string serialize() const = 0;
     virtual bool deserialize(std::string stream) = 0;
-    const std::vector<std::tuple<std::string, std::string>>& getTuplesFromStream(std::string stream);
+    std::vector<std::tuple<std::string, std::string>> getTuplesFromStream(const std::string& input) const;
+    std::vector<std::string> getStreamsFromSerializedInput(const std::string& serializedInput) const;
+    std::vector<std::vector<std::tuple<std::string, std::string>>> getTuplesCollectionFromStream(const std::string& stream) const;
 };
 
 #endif

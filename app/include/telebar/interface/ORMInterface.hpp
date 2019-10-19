@@ -1,18 +1,16 @@
 #ifndef _TELEBAR_INTERFACE_ORMINTERFACE_
 #define _TELEBAR_INTERFACE_ORMINTERFACE_
 
-#include <string>
-#include <telebar/entity/User.hpp>
+#include <telebar/interface/SerializableInterface.hpp>
 
-class ORMInterface{
-private:
-    int id;
-    std::string tablename;
-
+class ORMInterface: public SerializableInterface{
+protected:
+    int id_;
+    std::string tableName_;
 public:
-    //virtual bool save() const = 0;
-    //static virtual std::vector<> all() const = 0;
-    //static virtual std::vector<> getById(int id) const = 0;
+    ORMInterface() : id_(-1), tableName_(""), SerializableInterface() {};
+    const std::string& getTableName() const {return this->tableName_;};
+    int getId() const {return this->id_;};
 };
 
 #endif

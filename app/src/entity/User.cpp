@@ -1,6 +1,6 @@
 #include <telebar/entity/User.hpp>
-#include <telebar/utils/userAuthenticationUtils.hpp>
-#include <telebar/interface/ORMInterface.hpp>
+#include <telebar/utils/userAuthenticationUtils.hpp> // this is here as if it is added in the .hpp it creates a loop
+
 #include <iostream>
 
 const std::string &User::getUsername() const {
@@ -28,22 +28,29 @@ void User::setToken(const std::string &token) {
 }
 
 User::User(const std::string& stream) {
+    this->tableName_ = "userapp";
+    this->id_ = -1;
     this->deserialize(stream);
 }
+
 User::User(const std::string& token, const std::string& username, const std::string& password) {
-    User::token_ = token;
-    User::username_ = username;
-    User::password_ = password;
+    this->tableName_ = "userapp";
+    this->id_ = -1;
+    this->token_ = token;
+    this->username_ = username;
+    this->password_ = password;
 }
 
 User::User() {
-    User::token_ = "";
-    User::username_ = "";
-    User::password_ = "";
+    this->tableName_ = "userapp";
+    this->id_ = -1;
+    this->token_ = "";
+    this->username_ = "";
+    this->password_ = "";
 }
 
 std::string User::serialize() const {
-    return "{token:" + this->token_ + "|username:" + this->username_ + "|password:" + this->password_ + "}";
+    return "{id:"+ std::to_string(this->getId()) +"|token:" + this->token_ + "|username:" + this->username_ + "|password:" + this->password_ + "}";
 }
 
 bool User::deserialize(std::string stream) {
@@ -51,7 +58,9 @@ bool User::deserialize(std::string stream) {
     std::vector<std::tuple<std::string, std::string>> tuples = this->getTuplesFromStream(stream);
 
     for (auto& tuple : tuples) {
-        if (std::get<0>(tuple) == "token")
+        if (std::get<0>(tuple) == "id")
+            this->id_ = atoi(std::get<1>(tuple).c_str()) ;
+        else if (std::get<0>(tuple) == "token")
             this->setToken(std::get<1>(tuple));
         else if (std::get<0>(tuple) == "username")
             this->setUsername(std::get<1>(tuple));
