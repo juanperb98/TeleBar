@@ -22,8 +22,6 @@ set(CLIENT_SOURCES
 
 set(SERVER_SOURCES
     app/src/kernel/Server.cpp
-    app/src/controller/dbController.cpp
-    app/src/controller/securityController.cpp
 )
 
 set(COMMON_SOURCES
@@ -39,6 +37,7 @@ add_executable(server ${SERVER_TARGET} ${SERVER_SOURCES} ${COMMON_SOURCES})
 add_executable(client ${CLIENT_TARGET} ${CLIENT_SOURCES} ${COMMON_SOURCES})
 # add_executable(tests ${TEST_TARGET} ${CLIENT_SOURCES} ${SERVER_SOURCES} ${COMMON_SOURCES})
 
+target_link_libraries(server sqlite3)
 
 target_include_directories(server
     PRIVATE
@@ -54,3 +53,6 @@ target_include_directories(client
 #    PRIVATE
 #       ${PROJECT_SOURCE_DIR}/app/include
 #)
+
+
+

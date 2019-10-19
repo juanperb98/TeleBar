@@ -3,21 +3,14 @@
 #include <telebar/utils/ORM.hpp>
 #include <iostream>
 
-#define _SERVER_
 
 std::string handler(std::string test){ std::cout<<test<<"\n"; return test+" | OK";}
 
 int main() {
-    User user("token_diego", "diego", "secret");
-
-    ORM orm;
-    orm.createTable(user);
-    orm.save(user);
-
-    Server server(7707, handler);
-    server.setClientCap(5);
-    while (server.handleNextConnection()){
-    }
+    //Server server(7707, handler);
+    //server.setClientCap(5);
+    //while (server.handleNextConnection()) {
+    //}
 
 }
 

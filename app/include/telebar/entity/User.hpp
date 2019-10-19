@@ -2,6 +2,8 @@
 #define _TELEBAR_ENTITY_CLIENT_
 
 #include <string>
+#include <stdlib.h>
+#include <cstring>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>

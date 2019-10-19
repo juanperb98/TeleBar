@@ -50,7 +50,7 @@ User::User() {
 }
 
 std::string User::serialize() const {
-    return "{token:" + this->token_ + "|username:" + this->username_ + "|password:" + this->password_ + "}";
+    return "{id:"+ std::to_string(this->getId()) +"|token:" + this->token_ + "|username:" + this->username_ + "|password:" + this->password_ + "}";
 }
 
 bool User::deserialize(std::string stream) {
@@ -58,7 +58,9 @@ bool User::deserialize(std::string stream) {
     std::vector<std::tuple<std::string, std::string>> tuples = this->getTuplesFromStream(stream);
 
     for (auto& tuple : tuples) {
-        if (std::get<0>(tuple) == "token")
+        if (std::get<0>(tuple) == "id")
+            this->id_ = atoi(std::get<1>(tuple).c_str()) ;
+        else if (std::get<0>(tuple) == "token")
             this->setToken(std::get<1>(tuple));
         else if (std::get<0>(tuple) == "username")
             this->setUsername(std::get<1>(tuple));
