@@ -55,12 +55,16 @@ public:
     };
 
     template <class ObjectType>
-    bool createTable(ObjectType object) {
+    bool createTable() {
+        ObjectType object;
         std::string querry = "CREATE TABLE "+ object.getTableName() +"(id INT PRIMARY KEY NOT NULL";
-        for (auto& tuple : object.getTuplesFromStream(object.serialize())) {
-            querry += ", " + std::get<0>(tuple) + " CHAR(255)";
+        auto tuples = object.getTuplesFromStream(object.serialize());
+        for (int i = 1; i < tuples.size(); ++i) {
+            querry += ", " + std::get<0>(tuples[i]) + " CHAR(255)";
         }
         querry += ");";
+
+        std::cout<<querry<<"\n";
 
         char *zErrMsg = 0;
         int rc;
@@ -83,13 +87,22 @@ public:
         std::string querry = "INSERT INTO "+ object.getTableName() + " VALUES (";
         int id = object.getId();
         if ( id == -1 ) {
-
+            auto allObjects = this->all<ObjectType>();
+            for (auto object : allObjects) {
+                if (object.getId() > id)
+                    id = object.getId();
+            }
+            id++;
         }
-        querry += std::to_string(2);
-        for (auto& tuple : object.getTuplesFromStream(object.serialize())) {
-            querry += ", '" + std::get<1>(tuple) + "'";
+        querry += std::to_string(id);
+        auto tuples = object.getTuplesFromStream(object.serialize());
+        for (int i = 1; i < tuples.size(); ++i) {
+            querry += ", '" + std::get<1>(tuples[i]) + "'";
         }
         querry += ");";
+
+        std::cout<<querry<<"\n";
+
 
         char *zErrMsg = 0;
         int rc;
@@ -181,7 +194,6 @@ public:
         std::string querry = "update "+ object.getTableName() + " set ";
         bool firstField = true;
         auto tuples = object.getTuplesFromStream(object.serialize());
-
         for (int i = 1; i < tuples.size(); ++i) {
             if ( i != 1 )
                 querry += ", ";
