@@ -3,7 +3,6 @@
 
 #include <string>
 #include <vector>
-#include <stdlib.h>
 #include <iostream>
 #include <cstring>
 #include <sqlite3.h>
@@ -11,19 +10,16 @@
 #include <telebar/interface/ORMInterface.hpp>
 
 class ORM{
-protected:
-    //MYSQL* connection;
+private:
+    std::string stream;
     sqlite3* db;
 
 private:
-    std::string stream;
-
-private:
-    static int genericCallback(void *NotUsed, int argc, char **argv, char **azColName) {
+    /*static int genericCallback(void *NotUsed, int argc, char **argv, char **azColName) {
         for(int i = 0; i<argc; i++)
             printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
         printf("\n"); return 0;
-    }
+    }*/
 
     static int selectCallback(void *stream, int argc, char **argv, char **azColName) {
         auto buffer = (std::string*) stream;
@@ -41,7 +37,7 @@ private:
 
 
 public:
-    explicit ORM(std::string dbName) {
+    explicit ORM(const std::string& dbName) {
         int rc = sqlite3_open(dbName.c_str(), &this->db);
 
         if( rc ) {
@@ -49,6 +45,7 @@ public:
             exit(0);
         }
     };
+
     ~ORM() {
         sqlite3_close(db);
     };
