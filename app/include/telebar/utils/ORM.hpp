@@ -52,6 +52,7 @@ public:
 
     template <class ObjectType>
     bool createTable() {
+        sqlite3_exec(this->db, "BEGIN TRANSACTION;", NULL, NULL, NULL);
         ObjectType object;
         std::string querry = "CREATE TABLE "+ object.getTableName() +"(id INT PRIMARY KEY NOT NULL";
         auto tuples = object.getTuplesFromStream(object.serialize());
@@ -69,8 +70,12 @@ public:
         if( rc != SQLITE_OK ) {
             fprintf(stderr, "SQL error: %s\n", zErrMsg);
             sqlite3_free(zErrMsg);
+            sqlite3_exec(this->db, "END TRANSACTION;", NULL, NULL, NULL);
+            sqlite3_exec(this->db, "COMMIT;", NULL, NULL, NULL);
             return false;
         }
+        sqlite3_exec(this->db, "END TRANSACTION;", NULL, NULL, NULL);
+        sqlite3_exec(this->db, "COMMIT;", NULL, NULL, NULL);
         return true;
     };
 
@@ -78,6 +83,7 @@ public:
 
     template <class ObjectType>
     bool save(ObjectType object) {
+        sqlite3_exec(this->db, "BEGIN TRANSACTION;", NULL, NULL, NULL);
         std::string querry = "INSERT INTO "+ object.getTableName() + " VALUES (";
         int id = object.getId();
         if ( id == -1 ) {
@@ -102,9 +108,12 @@ public:
         if( rc != SQLITE_OK ) {
             fprintf(stderr, "SQL error: %s\n", zErrMsg);
             sqlite3_free(zErrMsg);
+            sqlite3_exec(this->db, "END TRANSACTION;", NULL, NULL, NULL);
+            sqlite3_exec(this->db, "COMMIT;", NULL, NULL, NULL);
             return false;
         }
-
+        sqlite3_exec(this->db, "END TRANSACTION;", NULL, NULL, NULL);
+        sqlite3_exec(this->db, "COMMIT;", NULL, NULL, NULL);
         return true;
     };
 
@@ -112,6 +121,7 @@ public:
 
     template <class ObjectType>
     std::vector<ObjectType> all() {
+        sqlite3_exec(this->db, "BEGIN TRANSACTION;", NULL, NULL, NULL);
         this->stream.clear();
         ObjectType object;
         std::vector<ObjectType> objects;
@@ -123,6 +133,8 @@ public:
         if( rc != SQLITE_OK ) {
             fprintf(stderr, "SQL error: %s\n", zErrMsg);
             sqlite3_free(zErrMsg);
+            sqlite3_exec(this->db, "COMMIT;", NULL, NULL, NULL);
+            sqlite3_exec(this->db, "END TRANSACTION;", NULL, NULL, NULL);
             return objects;
         }
         auto streams = object.getStreamsFromSerializedInput(this->stream);
@@ -130,11 +142,14 @@ public:
             object.deserialize(auxStream);
             objects.emplace_back(object);
         }
+        sqlite3_exec(this->db, "END TRANSACTION;", NULL, NULL, NULL);
+        sqlite3_exec(this->db, "COMMIT;", NULL, NULL, NULL);
         return objects;
     };
 
     template <class ObjectType>
     ObjectType getById(int id) {
+        sqlite3_exec(this->db, "BEGIN TRANSACTION;", NULL, NULL, NULL);
         ObjectType object;
         this->stream.clear();
         std::string querry = "select * from "+ object.getTableName();
@@ -146,9 +161,13 @@ public:
         if( rc != SQLITE_OK ) {
             fprintf(stderr, "SQL error: %s\n", zErrMsg);
             sqlite3_free(zErrMsg);
+            sqlite3_exec(this->db, "END TRANSACTION;", NULL, NULL, NULL);
+            sqlite3_exec(this->db, "COMMIT;", NULL, NULL, NULL);
             return object;
         }
         object.deserialize(this->stream);
+        sqlite3_exec(this->db, "END TRANSACTION;", NULL, NULL, NULL);
+        sqlite3_exec(this->db, "COMMIT;", NULL, NULL, NULL);
         return object;
     };
 
@@ -156,6 +175,7 @@ public:
 
     template <class ObjectType>
     std::vector<ObjectType> getByField(const std::string& field, const std::string& value) {
+        sqlite3_exec(this->db, "BEGIN TRANSACTION;", NULL, NULL, NULL);
         this->stream.clear();
         ObjectType object;
         std::vector<ObjectType> objects;
@@ -169,6 +189,8 @@ public:
         if( rc != SQLITE_OK ) {
             fprintf(stderr, "SQL error: %s\n", zErrMsg);
             sqlite3_free(zErrMsg);
+            sqlite3_exec(this->db, "END TRANSACTION;", NULL, NULL, NULL);
+            sqlite3_exec(this->db, "COMMIT;", NULL, NULL, NULL);
             return objects;
         }
         auto streams = object.getStreamsFromSerializedInput(this->stream);
@@ -176,11 +198,14 @@ public:
             object.deserialize(auxStream);
             objects.emplace_back(object);
         }
+        sqlite3_exec(this->db, "END TRANSACTION;", NULL, NULL, NULL);
+        sqlite3_exec(this->db, "COMMIT;", NULL, NULL, NULL);
         return objects;
     };
 
     template <class ObjectType>
     bool update(ObjectType object) {
+        sqlite3_exec(this->db, "BEGIN TRANSACTION;", NULL, NULL, NULL);
         this->stream.clear();
         std::string querry = "update "+ object.getTableName() + " set ";
         bool firstField = true;
@@ -199,14 +224,19 @@ public:
         if( rc != SQLITE_OK ) {
             fprintf(stderr, "SQL error: %s\n", zErrMsg);
             sqlite3_free(zErrMsg);
+            sqlite3_exec(this->db, "END TRANSACTION;", NULL, NULL, NULL);
+            sqlite3_exec(this->db, "COMMIT;", NULL, NULL, NULL);
             return false;
         }
+        sqlite3_exec(this->db, "END TRANSACTION;", NULL, NULL, NULL);
+        sqlite3_exec(this->db, "COMMIT;", NULL, NULL, NULL);
         return true;
     };
 
 
     template <class ObjectType>
     bool remove(ObjectType object) {
+        sqlite3_exec(this->db, "BEGIN TRANSACTION;", NULL, NULL, NULL);
         this->stream.clear();
         std::string querry = "delete from "+ object.getTableName() + " where id is " + std::to_string(object.getId()) + ";";
         bool firstField = true;
@@ -219,8 +249,12 @@ public:
         if( rc != SQLITE_OK ) {
             fprintf(stderr, "SQL error: %s\n", zErrMsg);
             sqlite3_free(zErrMsg);
+            sqlite3_exec(this->db, "END TRANSACTION;", NULL, NULL, NULL);
+            sqlite3_exec(this->db, "COMMIT;", NULL, NULL, NULL);
             return false;
         }
+        sqlite3_exec(this->db, "END TRANSACTION;", NULL, NULL, NULL);
+        sqlite3_exec(this->db, "COMMIT;", NULL, NULL, NULL);
         return true;
     };
 

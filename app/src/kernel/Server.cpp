@@ -120,7 +120,7 @@ bool Server::createNewSessionForClient() {
     this->clients_.push_back(client);
     FD_SET(client.socket_fd, &clients_fds_);
 
-    /*
+    char buffer[this->bufferSize_];
     bzero(buffer, this->bufferSize_);
     strcpy(buffer, "Welcome, please, log in or register now.");
     send(
@@ -129,7 +129,7 @@ bool Server::createNewSessionForClient() {
             strlen(buffer),
             0
     );
-    */
+
     return true;
 }
 
