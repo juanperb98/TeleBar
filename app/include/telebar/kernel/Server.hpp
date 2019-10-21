@@ -13,12 +13,13 @@
 #include <iostream>
 
 #include <telebar/entity/User.hpp>
-
+#include <telebar/utils/ORM.hpp>
+#include <telebar/configuration/serverConfiguration.hpp>
 
 /**
  * All the handlers must follow this type
  */
-typedef std::string (*handlerType)(std::string);
+typedef std::string (*handlerType)(ORM&, std::string);
 
 
 /**
@@ -36,6 +37,7 @@ class Server {
     };
 
 private:
+    ORM* orm_;
     int server_fd_;
     sockaddr_in server_{};
     int bufferSize_{};

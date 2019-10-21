@@ -2,30 +2,13 @@
 
 #include <telebar/kernel/Client.hpp>
 #include <telebar/entity/User.hpp>
+#include <telebar/configuration/clientConfiguration.hpp>
 
 int main(int argc, char const *argv[]) {
-    Client client("127.0.0.1", 7707);
-    client.sendMessage("hello from c1");
-    std::cout <<client.listen()<<"\n";
-    client.sendMessage("its me again, c1");
-    std::cout <<client.listen()<<"\n";
-    client.sendMessage("ok bye from c1");
-    std::cout <<client.listen()<<"\n";
+    Client client(SERVER_IP, SERVER_PORT);
+    std::cout<<client.listen()<<"\n";
+    std::string message = "null,login,{username:juanpedro|password:password}";
+    client.sendMessage(message);
+    std::cout<<client.listen()<<"\n";
     client.closeConnection();
-
-    Client client2("127.0.0.1", 7707);
-    client2.sendMessage("hello from c2");
-    std::cout <<client2.listen()<<"\n";
-    client2.sendMessage("its me again, c2");
-    std::cout <<client2.listen()<<"\n";
-    client2.sendMessage("ok bye from c2");
-    std::cout <<client2.listen()<<"\n";
-    client2.closeConnection();
-
-    /*User user("token", "username", "password");
-    std::cout<<user.serialize()<<"\n";
-
-    User user2(user.serialize());
-    std::cout<<user2.serialize()<<"\n";*/
 }
-
