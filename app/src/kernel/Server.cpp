@@ -2,6 +2,7 @@
 
 
 Server::Server(int portno, handlerType requestHandler) {
+    this->orm_ = new ORM(DB_NAME);
     this->clientCap_ = 50;
     this->bufferSize_ = 255;
 
@@ -122,7 +123,7 @@ bool Server::createNewSessionForClient() {
 
     char buffer[this->bufferSize_];
     bzero(buffer, this->bufferSize_);
-    strcpy(buffer, "Welcome, please, log in or register now.");
+    strcpy(buffer, "INFO,Welcome, please, log in or register now.");
     send(
             client.socket_fd,
             buffer,
@@ -168,7 +169,7 @@ bool Server::handleConnectionFromClient(int client_fd) {
         return false;
     }
 
-    std::string handledBuffer = this->handler_(buffer);
+    std::string handledBuffer = this->handler_(*this->orm_, buffer);
 
     if (strcmp(buffer, "EXIT") == 0)
         return handleClientExit(client.socket_fd);

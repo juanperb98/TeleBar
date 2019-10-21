@@ -4,7 +4,7 @@
 
 #include <string>
 
-std::string serverHandlerOrchestrator(std::string request) {
+std::string serverHandlerOrchestrator(ORM& orm, std::string request) {
     std::string token, action, payload;
     int tokenDelimiter;
 
@@ -18,24 +18,28 @@ std::string serverHandlerOrchestrator(std::string request) {
 
     payload = request;
 
-    User user = authenticationHandler(token);
+    // try to authenticate the user
+    User user = getUserFromToken(orm, token);
     bool authenticated = user.getId() != -1;
 
+
+    // it the user was not authenticated, try if the user wants to log in ro register
     if (action == "login" && !authenticated)
-        return logInHandler(payload);
+        return logInHandler(orm, payload);
+
     else if (action == "register" && !authenticated)
-        return registerHandler(payload);
+        return registerHandler(orm, payload);
+    // if the user didn't register or logged in, return authentication error
     else if (!authenticated)
         return "ERROR, invalid token";
 
-    return user.serialize();
+    return serverGameHandlerOrchestrator(orm, user, action, payload);
 }
 
 
-User authenticationHandler(const std::string& token) {
+User getUserFromToken(ORM& orm, const std::string& token) {
     if (token.empty())
         return User();
-    ORM orm(DB_NAME);
     auto users = orm.getByField<User>("token", token);
     if (users.size() != 1)
         return User();
@@ -43,10 +47,9 @@ User authenticationHandler(const std::string& token) {
         return users[0];
 }
 
-std::string logInHandler(const std::string &loginPayload) {
+std::string logInHandler(ORM& orm, const std::string &loginPayload) {
     User user;
     user.deserialize(loginPayload);
-    ORM orm(DB_NAME);
     auto users = orm.getByField<User>("username", user.getUsername());
     for (auto& useraux : users){
         if (useraux.getPassword() == user.getPassword())
@@ -55,12 +58,11 @@ std::string logInHandler(const std::string &loginPayload) {
     return "ERROR, invalid user, password convination";
 }
 
-std::string registerHandler(const std::string &loginPayload) {
+std::string registerHandler(ORM& orm, const std::string &loginPayload) {
     User user;
     user.deserialize(loginPayload);
-    ORM orm(DB_NAME);
     auto users = orm.getByField<User>("username", user.getUsername());
-    if (users.size() != 0)
+    if (!users.empty())
         return "ERROR, username already exists";
     user.setToken(utils::generateUUID());
     orm.save(user);

@@ -2,13 +2,13 @@
 
 #include <telebar/kernel/Client.hpp>
 #include <telebar/entity/User.hpp>
+#include <telebar/configuration/clientConfiguration.hpp>
 
 int main(int argc, char const *argv[]) {
-    Client client("127.0.0.1", 7707);
+    Client client(SERVER_IP, SERVER_PORT);
     std::cout<<client.listen()<<"\n";
-    std::string message = "asd,action,payload";
+    std::string message = "null,login,{username:juanpedro|password:password}";
     client.sendMessage(message);
     std::cout<<client.listen()<<"\n";
     client.closeConnection();
 }
-

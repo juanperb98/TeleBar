@@ -31,6 +31,7 @@ set(GAME_SOURCES
 set(SERVER_SOURCES
         app/src/kernel/Server.cpp
         app/src/handler/serverHandler/serverHandler.cpp
+        app/src/handler/serverHandler/serverGameHandler.cpp
 )
 
 set(COMMON_SOURCES
