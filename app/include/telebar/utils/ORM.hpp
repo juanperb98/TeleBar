@@ -88,9 +88,9 @@ public:
         int id = object.getId();
         if ( id == -1 ) {
             auto allObjects = this->all<ObjectType>();
-            for (auto object : allObjects) {
-                if (object.getId() > id)
-                    id = object.getId();
+            for (auto objectAux : allObjects) {
+                if (objectAux.getId() > id)
+                    id = objectAux.getId();
             }
             id++;
         }
