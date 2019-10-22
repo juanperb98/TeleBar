@@ -7,7 +7,7 @@
 int main(int argc, char const *argv[]) {
     Client client(SERVER_IP, SERVER_PORT);
     std::cout<<client.listen()<<"\n";
-    std::string message = "null,login,{username:juanpedro|password:password}";
+    std::string message = "d491e13038cdbf3beec9b7cbb817e,,{username:diego|password:secret}";
     client.sendMessage(message);
     std::cout<<client.listen()<<"\n";
     client.closeConnection();

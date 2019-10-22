@@ -8,6 +8,7 @@
 
 int main() {
     ORM orm("server.db");
+    orm.createTable<User>();
     Server server(7707, serverHandlerOrchestrator);
     while (server.handleNextConnection());
 }
