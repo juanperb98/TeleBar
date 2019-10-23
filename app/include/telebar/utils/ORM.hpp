@@ -82,7 +82,7 @@ public:
 
 
     template <class ObjectType>
-    bool save(ObjectType object) {
+    int save(ObjectType object) {
         sqlite3_exec(this->db_, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr);
         std::string querry = "INSERT INTO "+ object.getTableName() + " VALUES (";
         int id = object.getId();
@@ -110,11 +110,12 @@ public:
             sqlite3_free(zErrMsg);
             sqlite3_exec(this->db_, "END TRANSACTION;", nullptr, nullptr, nullptr);
             sqlite3_exec(this->db_, "COMMIT;", nullptr, nullptr, nullptr);
-            return false;
+            return -1;
         }
         sqlite3_exec(this->db_, "END TRANSACTION;", nullptr, nullptr, nullptr);
         sqlite3_exec(this->db_, "COMMIT;", nullptr, nullptr, nullptr);
-        return true;
+
+        return id;
     };
 
 
