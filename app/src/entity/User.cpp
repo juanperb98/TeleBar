@@ -85,3 +85,11 @@ bool User::operator==(const std::string &token) const {
     return (this->token_ == token) && !this->token_.empty();
 }
 
+int User::getGameId() {
+    return this->gameId_;
+}
+
+int User::setGameId(int id) {
+    this->gameId_ = id;
+}
+

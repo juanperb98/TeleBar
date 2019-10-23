@@ -1,5 +1,4 @@
 #include <telebar/handler/serverHandler/serverHandler.hpp>
-#include <telebar/configuration/serverConfiguration.hpp>
 #include <telebar/utils/userAuthenticationUtils.hpp>
 
 #include <string>

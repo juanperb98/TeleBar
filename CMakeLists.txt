@@ -34,6 +34,7 @@ set(SERVER_SOURCES
         app/src/handler/serverHandler/serverGameHandler.cpp
         app/src/entity/Player.cpp
         app/src/entity/Piece.cpp
+        app/src/entity/Game.cpp
 )
 
 set(COMMON_SOURCES

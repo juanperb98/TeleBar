@@ -20,6 +20,7 @@ private:
     std::string username_;
     std::string password_;
     std::string token_;
+    int gameId_;
 
 public:
     User();
@@ -49,6 +50,10 @@ public:
     bool operator==(const User& user) const;
 
     bool operator==(const std::string& token) const;
+
+    int getGameId();
+
+    int setGameId(int id);
 };
 
 #endif

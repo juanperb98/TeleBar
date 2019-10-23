@@ -5,36 +5,24 @@
 #include <vector>
 
 class Player{
+private:
+    int playerId_;
+    std::vector<Piece> pieces_;
 
 
-  private:
-    int _id;
-    std::vector<Piece> _pieces;
+public:
+    inline Player(int id) : playerId_(id){}
 
+    inline int getPlayerId();
 
-  public:
-
-
-    inline Player(int id) : _id(id){}
-
-    inline int getID()
-    {
-        return this->_id;
+    inline std::vector<Piece> getPieces(){
+        return this->pieces_;
     }
 
-    inline std::vector<Piece> getPieces()
-    {
-        return this->_pieces;
+    inline void getPiece(const Piece& piece){
+      this->pieces_.push_back(piece);
     }
 
-    inline void pickPiece(const Piece& piece)
-    {
-      this->_pieces.push_back(piece);
-    }
-
-    bool checkPiece(int left, int right);
-
-    bool removePiece(Piece& piece);
 };
 
 #endif

@@ -9,4 +9,6 @@
 
 std::string serverGameHandlerOrchestrator(ORM& orm, User user, std::string action, std::string payload);
 
+std::string serverStartGameHandler(ORM &orm, User user, std::string payload);
+
 #endif

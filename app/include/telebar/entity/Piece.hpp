@@ -1,40 +1,41 @@
 #ifndef PIECE_H
 #define PIECE_H
 
+#include <telebar/interface/SerializableInterface.hpp>
+
 #include <iostream>
-#include <cassert>
+
+class Piece : public SerializableInterface{
+
+private:
+    int number1_;
+    int number2_;
+
+public:
+    Piece(const int &number1, const int &number2);
+
+    explicit Piece(std::string stream);
+
+    bool isValid() const;
+
+    int getNumber1() const;
+
+    int getNumber2() const;
+
+    bool operator==(const Piece &p) const;
+
+    bool isCompatible(const Piece &p) const;
+
+    void flip();
+
+    std::string serialize() const override;
+
+    bool deserialize(std::string stream) override;
+
+    int getValue() const;
 
 
-
-    class Piece{
-
-    private:
-        int _number1;
-        int _number2;
-    public:
-        inline Piece(const int &number1, const int &number2){
-            if((number1 < 1) || (number1 > 6) || (number2 < 1) || (number2 > 6))
-            _number1 = number1;
-            _number2 = number2;
-        }
+};
 
 
-        inline int getNumber1() const {
-            return _number1;
-        }
-
-        inline int getNumber2() const {
-            return _number2;
-
-        }
-
-        inline bool operator==(const Piece &p) const{
-            return(((_number1 == p._number1) && (_number2==p._number2)) || ((_number1 == p._number2) && (_number2==p._number1))); 
-        }
-        void invert(){
-            int aux = _number1;
-            _number1 = _number2;
-            _number2 = aux;
-        }
-    };
 #endif

@@ -20,7 +20,7 @@ Client::Client(const std::string& addr, int portno) {
         );
         // TODO: finish error
         if (ret_val == -1){
-            fprintf(stderr, "ERROR TODO");
+            fprintf(stderr, "ERROR,Server cant be found.");
         }
     }
 
