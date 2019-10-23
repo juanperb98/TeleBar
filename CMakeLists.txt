@@ -32,6 +32,8 @@ set(SERVER_SOURCES
         app/src/kernel/Server.cpp
         app/src/handler/serverHandler/serverHandler.cpp
         app/src/handler/serverHandler/serverGameHandler.cpp
+        app/src/entity/Player.cpp
+        app/src/entity/Piece.cpp
 )
 
 set(COMMON_SOURCES
@@ -69,6 +71,3 @@ target_include_directories(game
 #    PRIVATE
 #       ${PROJECT_SOURCE_DIR}/app/include
 #)
-
-
-
