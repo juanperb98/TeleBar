@@ -54,7 +54,7 @@ public:
     bool createTable() {
         sqlite3_exec(this->db_, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr);
         ObjectType object;
-        std::string querry = "CREATE TABLE "+ object.getTableName() +"(id INT PRIMARY KEY NOT nullptr";
+        std::string querry = "CREATE TABLE "+ object.getTableName() +"(id INT PRIMARY KEY ";
         auto tuples = object.getTuplesFromStream(object.serialize());
         for (int i = 1; i < tuples.size(); ++i) {
             querry += ", " + std::get<0>(tuples[i]) + " CHAR(255)";
