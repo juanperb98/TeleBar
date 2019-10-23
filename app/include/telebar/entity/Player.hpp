@@ -1,7 +1,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "piece.hpp"
+#include <telebar/entity/Piece.hpp>
 #include <vector>
 
 class Player{
