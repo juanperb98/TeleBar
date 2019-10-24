@@ -30,17 +30,24 @@ set(GAME_SOURCES
 
 set(SERVER_SOURCES
         app/src/kernel/Server.cpp
+        app/src/entity/UserNotification.cpp
         app/src/handler/serverHandler/serverHandler.cpp
-        app/src/handler/serverHandler/serverGameHandler.cpp
-        app/src/entity/Player.cpp
-        app/src/entity/Piece.cpp
-        app/src/entity/Game.cpp
+        app/src/handler/serverHandler/serverGameHandler/serverGameHandlerOrchestrator.cpp
+        app/src/handler/serverHandler/serverGameHandler/serverStartGameHandler.cpp
+        app/src/handler/serverHandler/serverGameHandler/serverGetBoardHandler.cpp
+        app/src/handler/serverHandler/serverGameHandler/serverGetNotificationHandler.cpp
+        app/src/handler/serverHandler/serverGameHandler/serverGetMessageHandler.cpp
+        app/src/handler/serverHandler/serverGameHandler/serverNewMessageHandler.cpp
 )
 
 set(COMMON_SOURCES
         app/src/entity/User.cpp
         app/src/interface/SerializableInterface.cpp
         app/src/utils/userAuthenticationUtils.cpp
+        app/src/entity/Player.cpp
+        app/src/entity/Piece.cpp
+        app/src/entity/Game.cpp
+        app/src/entity/Message.cpp
 )
 
 

@@ -5,7 +5,8 @@
 
 #include <telebar/entity/User.hpp>
 #include <telebar/utils/ORM.hpp>
-#include <telebar/handler/serverHandler/serverGameHandler.hpp>
+#include <telebar/handler/serverHandler/serverGameHandler/serverGameHandlerOrchestrator.hpp>
+
 
 std::string serverHandlerOrchestrator(ORM& orm, std::string request);
 

@@ -29,7 +29,7 @@ public:
 
     User(const std::string& token, const std::string& username, const std::string& password);
 
-    const std::string &getUsername() const;
+    const int getUsername() const;
 
     void setUsername(const std::string &username);
 

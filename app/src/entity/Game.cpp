@@ -17,11 +17,11 @@ Game::Game(std::string stream) {
     this->deserialize(stream);
 }
 
-int Game::getNumberOfPlayers() const {
+int Game::getNumberOfPlayersCap() const {
     return numberOfPlayers_;
 }
 
-void Game::setNumberOfPlayers(int numberOfPlayers) {
+void Game::setNumberOfPlayersCap(int numberOfPlayers) {
     numberOfPlayers_ = numberOfPlayers;
 }
 
@@ -98,7 +98,7 @@ std::string Game::serialize() const {
     stream += "{";
 
     stream += "id:" + std::to_string(this->getId()) + "|";
-    stream += "numberOfPlayers:" + std::to_string(this->getNumberOfPlayers()) + "|";
+    stream += "numberOfPlayers:" + std::to_string(this->getNumberOfPlayersCap()) + "|";
     {
         stream += "inBoardPieces:[";
         for (int i = 0; i < this->inBoardPieces_.size() ; ++i) {
@@ -139,6 +139,10 @@ std::string Game::serialize() const {
 
         stream += "]";
     }
+    {
+        stream += "|isFull:";
+        stream += this->players_.size() < this->numberOfPlayers_ ? std::to_string(0) : std::to_string(1);
+    }
 
     stream += "}";
     return stream;
@@ -152,7 +156,7 @@ bool Game::deserialize(std::string stream) {
             this->id_ = atoi(std::get<1>(tuple).c_str());
 
         else if (std::get<0>(tuple) == "numberOfPlayers")
-            this->setNumberOfPlayers( atoi(std::get<1>(tuple).c_str()));
+            this->setNumberOfPlayersCap(atoi(std::get<1>(tuple).c_str()));
 
         else if (std::get<0>(tuple) == "inBoardPieces")
             for (auto& pieceStream : this->getStreamsFromSerializedInput(std::get<1>(tuple).substr(1, std::get<1>(tuple).size() - 2)))
@@ -188,7 +192,7 @@ bool Game::deserialize(std::string stream) {
 
 void Game::prepareObjectForPlayer(int userId) {
     this->toStealPieces_.clear();
-    for (int i = 0; i < this->getNumberOfPlayers(); ++i) {
+    for (int i = 0; i < this->getNumberOfPlayersCap(); ++i) {
         if (this->players_[i].userId == userId)
             this->players_.erase(this->players_.begin() + i);
     }
@@ -198,5 +202,9 @@ std::string Game::serializeForPlayer(int userId) const {
     Game newGame = *this;
     newGame.prepareObjectForPlayer(userId);
     return newGame.serialize();
+}
+
+int Game::getNumberOfPlayers() const {
+    return this->players_.size();
 }
 

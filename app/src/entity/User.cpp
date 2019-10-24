@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-const std::string &User::getUsername() const {
+const int User::getUsername() const {
     return username_;
 }
 

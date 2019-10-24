@@ -23,10 +23,10 @@ std::string serverHandlerOrchestrator(ORM& orm, std::string request) {
 
 
     // it the user was not authenticated, try if the user wants to log in ro register
-    if (action == "login" && !authenticated)
+    if (action == SERVER_ACTION_LOGIN && !authenticated)
         return logInHandler(orm, payload);
 
-    else if (action == "register" && !authenticated)
+    else if (action == SERVER_ACTION_REGISTER && !authenticated)
         return registerHandler(orm, payload);
     // if the user didn't register or logged in, return authentication error
     else if (!authenticated)

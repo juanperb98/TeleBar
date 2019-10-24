@@ -34,7 +34,9 @@ public:
 
     int getNumberOfPlayers() const;
 
-    void setNumberOfPlayers(int numberOfPlayers);
+    int getNumberOfPlayersCap() const;
+
+    void setNumberOfPlayersCap(int numberOfPlayers);
 
     bool addPlayer(User user);
 
