@@ -18,6 +18,12 @@ UserNotification::UserNotification() {
     this->notification_ = "";
 }
 
+UserNotification::UserNotification(std::string stream) {
+    this->tableName_ = "userNotification";
+    this->deserialize(stream);
+}
+
+
 const std::string &UserNotification::getNotification() const {
     return notification_;
 }

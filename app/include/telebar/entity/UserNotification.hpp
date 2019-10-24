@@ -13,6 +13,8 @@ private:
 public:
     UserNotification(int userId, int entityId, std::string entityName, std::string notification);
 
+    UserNotification(std::string stream);
+
     UserNotification();
 
     const std::string &getNotification() const;
