@@ -10,7 +10,6 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <cstring>
-#include <iostream>
 
 #include <telebar/entity/User.hpp>
 #include <telebar/utils/ORM.hpp>

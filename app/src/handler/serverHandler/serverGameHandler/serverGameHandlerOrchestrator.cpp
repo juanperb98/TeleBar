@@ -3,23 +3,25 @@
 
 std::string serverGameHandlerOrchestrator(ORM &orm, User user, std::string action, std::string payload) {
 
+    std::cout<<"action:"<<action<<"\n";
+
     if (action == GAME_ACTION_START_GAME)
         return serverStartGameHandler(orm, user, payload);
 
     else if (action == GAME_ACTION_GET_UPDATE)
-        return payload;
+        return serverGetNotificationHandler(orm, user, payload);
 
     else if (action == GAME_ACTION_GET_BOARD)
         return serverGetBoardHandler(orm, user, payload);
 
     else if (action == GAME_ACTION_SEND_BOARD_MOVEMENT)
-        return payload;
+        return "GAME_ACTION_SEND_BOARD_MOVEMENT not implemented yet";
 
     else if (action == GAME_ACTION_SEND_MESSAGE)
-        return payload;
+        return serverNewMessageHandler(orm, user, payload);
 
     else if (action == GAME_ACTION_GET_MESSAGE)
-        return payload;
+        return serverGetMessageHandler(orm, user, payload);
 
     return "ERROR,Request not found";
 }

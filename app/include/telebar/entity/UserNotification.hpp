@@ -3,7 +3,7 @@
 
 #include <telebar/interface/ORMInterface.hpp>
 
-class UserNotification : ORMInterface {
+class UserNotification : public ORMInterface {
 private:
     std::string notification_;
     std::string relatedEntityName_;
@@ -12,6 +12,8 @@ private:
 
 public:
     UserNotification(int userId, int entityId, std::string entityName, std::string notification);
+
+    UserNotification();
 
     const std::string &getNotification() const;
 

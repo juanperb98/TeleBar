@@ -7,7 +7,15 @@ UserNotification::UserNotification(int userId, int entityId, std::string entityN
     this->relatedEntityId_ = entityId;
     this->relatedEntityName_ = entityName;
     this->notification_ = notification;
+}
 
+UserNotification::UserNotification() {
+    this->id_ = -1;
+    this->tableName_ = "userNotification";
+    this->relatedUserId_ = -1;
+    this->relatedEntityId_ = -1;
+    this->relatedEntityName_ = "";
+    this->notification_ = "";
 }
 
 const std::string &UserNotification::getNotification() const {
@@ -62,3 +70,5 @@ bool UserNotification::deserialize(std::string stream) {
 
     return true;
 }
+
+

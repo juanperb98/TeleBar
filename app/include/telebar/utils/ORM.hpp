@@ -100,7 +100,6 @@ public:
             querry += ", '" + std::get<1>(tuples[i]) + "'";
         }
         querry += ");";
-
         char *zErrMsg = nullptr;
         int rc;
         char *sql;

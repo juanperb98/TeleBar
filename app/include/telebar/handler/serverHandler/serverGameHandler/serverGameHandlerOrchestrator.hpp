@@ -8,6 +8,9 @@
 #include <telebar/entity/Game.hpp>
 #include <telebar/configuration/serverConfiguration.hpp>
 #include <telebar/handler/serverHandler/serverGameHandler/serverStartGameHandler.hpp>
+#include <telebar/handler/serverHandler/serverGameHandler/serverNewMessageHandler.hpp>
+#include <telebar/handler/serverHandler/serverGameHandler/serverGetMessageHandler.hpp>
+#include <telebar/handler/serverHandler/serverGameHandler/serverGetNotificationHandler.hpp>
 #include <telebar/handler/serverHandler/serverGameHandler/serverGetBoardHandler.hpp>
 #include <telebar/configuration/gameConfiguration.hpp>
 
