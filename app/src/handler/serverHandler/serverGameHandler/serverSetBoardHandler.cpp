@@ -27,6 +27,14 @@ std::string serverSetBoardHandler(ORM &orm, User user, std::string payload) {
         return std::string("OK") + game.serializeForPlayer(user.getId());
     }
 
+    if (action.getAction() == GAME_ACTION_PASS) {
+        if (!game.currentPlayerPass())
+            return "ERROR,you cant pass this turn";
+        orm.update(game);
+        return std::string("OK") + game.serializeForPlayer(user.getId());
+    }
+
+
     if (action.getAction() == GAME_ACTION_STEAL_PIECE) {
         if (!game.currentPlayerSteal())
             return "ERROR,you cant steal";

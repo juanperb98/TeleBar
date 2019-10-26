@@ -11,6 +11,7 @@
 #define GAME_ACTION_PUT_PIECE_TO_THE_LEFT "putPieceLeft"
 #define GAME_ACTION_PUT_PIECE_TO_THE_RIGHT "putPieceRight"
 #define GAME_ACTION_STEAL_PIECE "stealPiece"
+#define GAME_ACTION_PASS "pass"
 
 #define GAME_EVENT_THE_GAME_HAS_STARTED "theGameHasStarted"
 #define GAME_EVENT_NEW_MESSAGE "newMessage"

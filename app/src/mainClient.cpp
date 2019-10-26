@@ -31,8 +31,8 @@ int main(int argc, char const *argv[]) {
     client.sendMessage(message);
     std::cout<<client.listen()<<"\n";*/
 
-    Piece piece(1,3);
-    GameAction action(GAME_ACTION_PUT_PIECE_TO_THE_RIGHT, piece);
+    Piece piece(1,6);
+    GameAction action(GAME_ACTION_STEAL_PIECE, piece);
     message = std::string("dffa221b9b26e06cf00f66674c0f28ef276096b23a037e9606,setBoard,")+action.serialize();
     client.sendMessage(message);
     std::cout<<client.listen()<<"\n";

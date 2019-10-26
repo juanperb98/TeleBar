@@ -46,10 +46,10 @@ Piece Game::getStealPiece() {
 
 bool Game::currentPlayerPutPieceToTheLeft(Piece piece) {
     Piece flipablePiece(piece.serialize());
-    std::cout<<flipablePiece.serialize()<<"\n";
+    //std::cout<<flipablePiece.serialize()<<"\n";
     if (!currentPlayerCanPutPieceToTheLeft(flipablePiece)) {
         flipablePiece.flip();
-        std::cout<<flipablePiece.serialize()<<"\n";
+        //std::cout<<flipablePiece.serialize()<<"\n";
         if (!currentPlayerCanPutPieceToTheLeft(flipablePiece)) {
             fprintf(stderr, "ERROR, cant place piece in the board\n");
             return false;
@@ -68,10 +68,10 @@ bool Game::currentPlayerPutPieceToTheLeft(Piece piece) {
 
 bool Game::currentPlayerPutPieceToTheRight(Piece piece) {
     Piece flipablePiece(piece.serialize());
-    std::cout<<flipablePiece.serialize()<<"\n";
+    //std::cout<<flipablePiece.serialize()<<"\n";
     if (!currentPlayerCanPutPieceToTheRight(flipablePiece)) {
         flipablePiece.flip();
-        std::cout<<flipablePiece.serialize()<<"\n";
+        //std::cout<<flipablePiece.serialize()<<"\n";
         if (!currentPlayerCanPutPieceToTheRight(flipablePiece)) {
             fprintf(stderr, "ERROR, cant place piece in the board\n");
             return false;
@@ -89,9 +89,9 @@ bool Game::currentPlayerPutPieceToTheRight(Piece piece) {
 }
 
 bool Game::currentPlayerCanPutPieceToTheLeft(Piece piece) const {
-    std::cout<<"board"<<this->inBoardPieces_[0].serialize()<<"player:"<<piece.serialize()<<(this->inBoardPieces_[0].getRight() == piece.getLeft())<<"\n";
+    std::cout<<"player:"<<piece.serialize()<<"board"<<this->inBoardPieces_[0].serialize()<<(this->inBoardPieces_[0].getRight() == piece.getLeft())<<"\n";
     if (currentPlayerHasPiece(piece))
-        return this->inBoardPieces_[0].getRight() == piece.getLeft();
+        return this->inBoardPieces_[0].getLeft() == piece.getRight();
     return false;
 }
 
@@ -105,6 +105,7 @@ bool Game::currentPlayerCanPutPieceToTheRight(Piece piece) const {
 bool Game::currentPlayerCanStealPiece() const {
     if (currentPlayerCanPlace())
         return false;
+    std::cout<<"canSteal\n";
     return !this->toStealPieces_.empty();
 }
 
@@ -272,13 +273,18 @@ bool Game::hasTurn(int userId) const {
 bool Game::currentPlayerCanPlace() const {
     // gets the playing user
     Player playingUser = this->players_[getCurrentPlayerIndex()];
-
+    std::cout<<"cheking if player can place\n";
     for (Piece& inHandPiece : playingUser.inHandPieces) {
-        if (inHandPiece.isCompatible(this->inBoardPieces_[0]))
+        Piece piece(inHandPiece.serialize());
+        std::cout<<piece.serialize()<<"\n";
+        if (currentPlayerCanPutPieceToTheLeft(piece) || currentPlayerCanPutPieceToTheRight(piece))
             return true;
-        if (inHandPiece.isCompatible(this->inBoardPieces_[this->inBoardPieces_.size()-1]))
+        piece.flip();
+        std::cout<<piece.serialize()<<"\n";
+        if (currentPlayerCanPutPieceToTheLeft(piece) || currentPlayerCanPutPieceToTheRight(piece))
             return true;
     }
+    std::cout<<"cant place\n";
     return false;
 }
 
@@ -316,12 +322,12 @@ bool Game::removePieceToCurrentPlayer(Piece piece) {
 
 bool Game::currentPlayerCanPass() const {
     if (currentPlayerCanPlace())
-        return true;
+        return false;
 
     if (currentPlayerCanStealPiece())
-        return true;
+        return false;
 
-    return false;
+    return true;
 }
 
 bool Game::currentPlayerSteal() {
