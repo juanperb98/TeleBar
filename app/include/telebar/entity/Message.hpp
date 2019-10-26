@@ -14,6 +14,8 @@ private:
 
 
 public:
+    Message();
+
     Message(User user, std::string message);
 
     explicit Message(std::string stream);

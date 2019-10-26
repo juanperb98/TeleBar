@@ -81,7 +81,7 @@ bool Server::handleNextConnection() {
 }
 
 bool Server::createNewSessionForClient() {
-    std::cout<<"accepting connection\n";
+    //std::cout<<"accepting connection\n";
 
     serverClient client;
 
@@ -189,7 +189,7 @@ bool Server::handleClientExit(int client_fd) {
     std::vector<serverClient>::iterator it;
     for (it = this->clients_.begin(); it != this->clients_.end() ; it++) {
         if (it->socket_fd == client_fd) {
-            std::cout<<"closing connection\n";
+            //std::cout<<"closing connection\n";
             close(client_fd);
             FD_CLR(client_fd,&this->clients_fds_);
             this->clients_.erase(it);

@@ -7,5 +7,5 @@ std::string serverGetMessageHandler(ORM &orm, User user, std::string payload) {
     if (message.getId() == -1)
         return "ERROR,message not found";
 
-    return std::string("OK") + message.serialize();
+    return std::string("OK,") + message.serialize();
 }

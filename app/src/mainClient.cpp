@@ -3,15 +3,30 @@
 #include <telebar/kernel/Client.hpp>
 #include <telebar/entity/User.hpp>
 #include <telebar/configuration/clientConfiguration.hpp>
+#include <telebar/configuration/serverConfiguration.hpp>
+#include <telebar/configuration/gameConfiguration.hpp>
+#include <telebar/entity/UserNotification.hpp>
+#include <telebar/entity/GameAction.hpp>
 
 int main(int argc, char const *argv[]) {
     Client client(SERVER_IP, SERVER_PORT);
     std::cout<<client.listen()<<"\n";
-    std::string message = ",register,{username:diego|password:secret}";
+    std::string message, retval;
+
+    /*message = ",register,{username:pepe|password:secret}";
     client.sendMessage(message);
     std::cout<<client.listen()<<"\n";
+
+    exit(1);*/
+
+    /*message = "dffa221b9b26e06cf00f66674c0f28ef276096b23a037e9606,startGame,3";
+    client.sendMessage(message);
+    std::cout<<client.listen()<<"\n";
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 =======
+=======
+>>>>>>> e68d2119be96ef04dcc56bf8881336942d77bf0e
 
     message = "81ec80cf5f92ca1f89f20e633358e499c75d7bd695eb624e36,startGame,3";
     client.sendMessage(message);
@@ -23,7 +38,7 @@ int main(int argc, char const *argv[]) {
 
     Piece piece(1,6);
     GameAction action(GAME_ACTION_STEAL_PIECE, piece);
-    message = std::string("dffa221b9b26e06cf00f66674c0f28ef276096b23a037e9606,getBoard,pipo");
+    message = std::string("dffa221b9b26e06cf00f66674c0f28ef276096b23a037e9606,setBoard,")+action.serialize();
     client.sendMessage(message);
     std::cout<<client.listen()<<"\n";
 
@@ -45,6 +60,9 @@ int main(int argc, char const *argv[]) {
     std::cout<<retval<<"\n";
     */
 
+<<<<<<< HEAD
 >>>>>>> Stashed changes
+=======
+>>>>>>> e68d2119be96ef04dcc56bf8881336942d77bf0e
     client.closeConnection();
 }

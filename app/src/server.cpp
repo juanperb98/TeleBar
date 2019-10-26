@@ -11,38 +11,35 @@ int main() {
     ORM orm("server.db");
 
     orm.createTable<User>();
-
-
-    for (int i = 0; i < 4; ++i) {
-        std::cout<<orm.getById<Game>(i).serialize()<<"\n\n";
-
-    }
-    Game game;
-    User user = orm.getById<User>(0);
-    User user2 = orm.getById<User>(1);
-    std::cout<<user.serialize()<<"\n";
-    std::cout<<user2.serialize()<<"\n";
-
-    game.addPlayer(user);
-    game.addPlayer(user2);
-    game.startGame();
-    game.debug();
-    std::cout<<game.serialize()<<"\n\n";
-    Game game2(game.serialize());
-
-    std::cout<<game2.serializeForPlayer(0)<<"\n";
-    std::cout<<game2.serialize()<<"\n";
-
+    orm.createTable<Message>();
     orm.createTable<Game>();
+    orm.createTable<UserNotification>();
 
-    int gameid = orm.save(game2);
+    User user0 = orm.getById<User>(0);
+    User user1 = orm.getById<User>(1);
+    User user2 = orm.getById<User>(2);
 
-    Game game3 = orm.getById<Game>(gameid);
-    std::cout<<game3.serialize()<<"\n";
+    /*Game game;
+    game.setNumberOfPlayersCap(3);
+    User user0 = orm.getById<User>(0);
+    User user1 = orm.getById<User>(1);
+    User user2 = orm.getById<User>(2);
+    game.addPlayer(user0);
+    orm.save(game);
+
+    game.addPlayer(user1);
+    game.addPlayer(user2);
+    orm.save(game);
+
+    std::cout<<game.serialize()<<"\n";
+
+    Game game2(game.serialize());
+    std::cout<<game2.serialize()<<"\n";*/
+
 
 
 
     Server server(7707, serverHandlerOrchestrator);
-    //while (server.handleNextConnection());
+    while (server.handleNextConnection());
 }
 

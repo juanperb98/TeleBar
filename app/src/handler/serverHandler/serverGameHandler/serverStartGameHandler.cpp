@@ -2,48 +2,55 @@
 
 
 std::string serverStartGameHandler(ORM &orm, User user, std::string payload) {
-    if (user.getGameId() != -1)
-        return "ERROR,you are already in a game";
+    {
+        Game game = orm.getById<Game>(user.getGameId());
+        if (game.getId() != -1)
+            return "ERROR,you are already in a game";
+    }
 
-    auto waitingGames = orm.getByField<Game>("isFull", "0");
     int desiredNumberOfPlayers = atoi(payload.c_str());
     if (desiredNumberOfPlayers < MIN_PLAYERS || desiredNumberOfPlayers > MAX_PLAYERS)
         return "ERROR,number of players out of bounds";
 
-    Game selectedGame;
+    std::vector<Game> waitingGames;
+    waitingGames = orm.getByField<Game>("isFull", "0");
 
-    for (auto& game : waitingGames) {
-        if (game.getNumberOfPlayersCap() == desiredNumberOfPlayers) {
-            selectedGame = game;
+
+
+    int selectedGameId = -1;
+
+    for (int i = 0; i < waitingGames.size(); ++i) {
+        if (waitingGames[i].getNumberOfPlayersCap() == desiredNumberOfPlayers) {
+            selectedGameId = waitingGames[i].getId();
             break;
         }
     }
-    if (selectedGame.getId() != -1){ // there is at least one game waiting with the correct number of players
-        selectedGame.addPlayer(user);
-        // add the gameId to the user
-        user.setGameId(selectedGame.getId());
-        orm.update(user);
-        auto gameUsers = orm.getByField<User>("gameId", std::to_string(selectedGame.getId()));
-        for (User gameUser : gameUsers) {
-            orm.save(UserNotification(gameUser.getId(), selectedGame.getId(), selectedGame.getTableName(), GAME_EVENT_THE_GAME_HAS_STARTED));
-        }
-        // if the game is full, start the game
-        if (selectedGame.getNumberOfPlayersCap() == selectedGame.getNumberOfPlayers()) {
-            selectedGame.startGame();
-            orm.update(selectedGame);
 
-            return std::string("OK") + waitingGames[0].serializeForPlayer(user.getId());
-        }
-        // if not, send the wait to the client
-        orm.update(selectedGame);
-        return std::string("WAIT") + waitingGames[0].serializeForPlayer(user.getId());
+    // create a new game
+    if (selectedGameId == -1) {
+        Game game;
+        game.setNumberOfPlayersCap(desiredNumberOfPlayers);
+        game.addPlayer(user);
+        int gameId = orm.save(game);
+        user.setGameId(gameId);
+        orm.update(user);
+        return std::string("WAIT,") + orm.getById<Game>(gameId).serializeForPlayer(user.getId());
     }
-    // there is no game waiting, so create a new one and wait
-    selectedGame.setNumberOfPlayersCap(desiredNumberOfPlayers);
-    selectedGame.addPlayer(user);
-    int gameId = orm.save(selectedGame);
-    // add the gameId to the user
-    user.setGameId(gameId);
+
+    // join the game
+
+    Game game = orm.getById<Game>(selectedGameId);
+    game.addPlayer(user);
+    user.setGameId(game.getId());
     orm.update(user);
-    return std::string("WAIT,") + orm.getById<Game>(gameId).serializeForPlayer(user.getId());
+    if (game.getNumberOfPlayersCap() == game.getNumberOfPlayers()) {
+        game.startGame();
+        for (int& playerId : game.getPlayersIds()) {
+            orm.save(UserNotification(playerId, game.getId(), game.getTableName(), GAME_EVENT_THE_GAME_HAS_STARTED));
+        }
+        orm.update(game);
+        return std::string("OK,") + game.serializeForPlayer(user.getId());
+    }
+    orm.update(game);
+    return std::string("WAIT,") + game.serializeForPlayer(user.getId());
 }
