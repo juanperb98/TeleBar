@@ -4,7 +4,7 @@
 Server::Server(int portno, handlerType requestHandler) {
     this->orm_ = new ORM(DB_NAME);
     this->clientCap_ = 50;
-    this->bufferSize_ = 255;
+    this->bufferSize_ = BUFFER_SIZE;
 
     this->server_.sin_port = htons(portno);
     this->server_.sin_family = AF_INET;

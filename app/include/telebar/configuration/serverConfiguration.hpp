@@ -8,5 +8,6 @@
 
 #define SERVER_ACTION_LOGIN "login"
 #define SERVER_ACTION_REGISTER "register"
+#define BUFFER_SIZE 10000
 
 #endif

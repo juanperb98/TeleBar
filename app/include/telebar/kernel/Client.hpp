@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <cstring>
 #include <arpa/inet.h>
+#include <telebar/configuration/clientConfiguration.hpp>
 
 
 /**
