@@ -12,6 +12,8 @@
 #include <telebar/handler/serverHandler/serverGameHandler/serverGetMessageHandler.hpp>
 #include <telebar/handler/serverHandler/serverGameHandler/serverGetNotificationHandler.hpp>
 #include <telebar/handler/serverHandler/serverGameHandler/serverGetBoardHandler.hpp>
+#include <telebar/handler/serverHandler/serverGameHandler/serverSetBoardHandler.hpp>
+
 #include <telebar/configuration/gameConfiguration.hpp>
 
 /**

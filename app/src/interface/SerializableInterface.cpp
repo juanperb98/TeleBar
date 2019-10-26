@@ -3,7 +3,6 @@
 
 std::vector<std::tuple<std::string, std::string>> SerializableInterface::getTuplesFromStream(const std::string& stream) const {
     std::string input = stream;
-
     if (input[0] != '{') {
         fprintf(stderr, "ERROR, could not deserialize object, expected '{' at the start of stream\n");
         return *(new std::vector<std::tuple<std::string, std::string>>());

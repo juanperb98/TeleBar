@@ -5,12 +5,17 @@
 using std::ostream;
 
 ostream& operator<<(ostream &os, const Piece &p){
-    os << "|" << p.getNumber1() << "·" << p.getNumber2() <<"|";
+    os << "|" << p.getLeft() << "·" << p.getRight() << "|";
 }
 
-Piece::Piece(const int &number1, const int &number2) {
-    number1_ = number1;
-    number2_ = number2;
+Piece::Piece() {
+    r_ = -1;
+    l_ = -1;
+}
+
+Piece::Piece(const int &l, const int &r) {
+    l_ = l;
+    r_ = r;
 }
 
 Piece::Piece(std::string stream) {
@@ -18,36 +23,36 @@ Piece::Piece(std::string stream) {
 }
 
 bool Piece::isValid() const {
-    return (number1_ >= 0) && (number1_ <= 6) && (number2_ >= 0) && (number2_ <= 6);
+    return (r_ >= 0) && (r_ <= 6) && (l_ >= 0) && (l_ <= 6);
 }
 
-int Piece::getNumber1() const {
-    return number1_;
+int Piece::getLeft() const {
+    return l_;
 }
 
-int Piece::getNumber2() const {
-    return number2_;
+int Piece::getRight() const {
+    return r_;
 }
 
 bool Piece::operator==(const Piece &p) const {
-    return ((number1_ == p.number1_) && (number2_ == p.number2_));
+    return ((r_ == p.r_) && (l_ == p.l_));
 }
 
 bool Piece::isCompatible(const Piece &p) const {
-    return((number1_ == p.number1_) \
-                || (number2_ == p.number2_) \
-                || (number1_ == p.number2_) \
-                || (number2_ == p.number1_));
+    return((r_ == p.r_) \
+ || (l_ == p.l_) \
+ || (r_ == p.l_) \
+ || (l_ == p.r_));
 }
 
 void Piece::flip() {
-    int aux = number1_;
-    number1_ = number2_;
-    number2_ = aux;
+    int aux = r_;
+    r_ = l_;
+    l_ = aux;
 }
 
 std::string Piece::serialize() const {
-    return std::string("{L:") + std::to_string(this->number1_) + "|R:" + std::to_string(this->number2_) + "}";
+    return std::string("{L:") + std::to_string(this->l_) + "|R:" + std::to_string(this->r_) + "}";
 }
 
 bool Piece::deserialize(std::string stream) {
@@ -55,23 +60,27 @@ bool Piece::deserialize(std::string stream) {
 
     for (auto& tuple : tuples) {
         if (std::get<0>(tuple) == "L")
-            this->number1_= (atoi(std::get<1>(tuple).c_str())) ;
+            this->l_= (atoi(std::get<1>(tuple).c_str())) ;
         else if (std::get<0>(tuple) == "R")
-            this->number2_ = (atoi(std::get<1>(tuple).c_str()));
+            this->r_ = (atoi(std::get<1>(tuple).c_str()));
     }
 
     return true;
 }
 
 int Piece::getValue() const {
-    if (number1_==6 && number1_==number2_) return 500;
-    else if (number1_==5 && number1_==number2_) return 499;
-    else if (number1_==4 && number1_==number2_) return 498;
-    else if (number1_==3 && number1_==number2_) return 497;
-    else if (number1_==2 && number1_==number2_) return 496;
-    else if (number1_==1 && number1_==number2_) return 495;
-    else if (number1_==0 && number1_==number2_) return 494;
-    else return number1_ + number2_;
+    if (r_ == 6 && r_ == l_) return 500;
+    else if (r_ == 5 && r_ == l_) return 499;
+    else if (r_ == 4 && r_ == l_) return 498;
+    else if (r_ == 3 && r_ == l_) return 497;
+    else if (r_ == 2 && r_ == l_) return 496;
+    else if (r_ == 1 && r_ == l_) return 495;
+    else if (r_ == 0 && r_ == l_) return 494;
+    else return r_ + l_;
+}
+
+bool Piece::operator!=(const Piece &p) const {
+    return !((*this)==p);
 }
 
 

@@ -21,6 +21,9 @@ std::string serverHandlerOrchestrator(ORM& orm, std::string request) {
     User user = getUserFromToken(orm, token);
     bool authenticated = user.getId() != -1;
 
+    if (action == "EXIT")
+        return request;
+
 
     // it the user was not authenticated, try if the user wants to log in ro register
     if (action == SERVER_ACTION_LOGIN && !authenticated)

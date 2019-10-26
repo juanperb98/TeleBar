@@ -8,21 +8,25 @@
 class Piece : public SerializableInterface{
 
 private:
-    int number1_;
-    int number2_;
+    int r_;
+    int l_;
 
 public:
+    Piece ();
+
     Piece(const int &number1, const int &number2);
 
     explicit Piece(std::string stream);
 
     bool isValid() const;
 
-    int getNumber1() const;
+    int getLeft() const;
 
-    int getNumber2() const;
+    int getRight() const;
 
     bool operator==(const Piece &p) const;
+
+    bool operator!=(const Piece &p) const;
 
     bool isCompatible(const Piece &p) const;
 

@@ -15,7 +15,7 @@ std::string serverGameHandlerOrchestrator(ORM &orm, User user, std::string actio
         return serverGetBoardHandler(orm, user, payload);
 
     else if (action == GAME_ACTION_SEND_BOARD_MOVEMENT)
-        return "GAME_ACTION_SEND_BOARD_MOVEMENT not implemented yet";
+        return serverSetBoardHandler(orm, user, payload);
 
     else if (action == GAME_ACTION_SEND_MESSAGE)
         return serverNewMessageHandler(orm, user, payload);

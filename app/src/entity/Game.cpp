@@ -3,12 +3,7 @@
 Game::Game(){
     this->tableName_ = "game";
     this->id_ = -1;
-    this->numberOfPlayers_ = 2 ;
-    for (int i = 1; i <= 6; ++i) {
-        for (int j = 1; j <= 6 ; ++j) {
-            this->toStealPieces_.emplace_back(Piece(i, j));
-        }
-    }
+    this->numberOfPlayersCap_ = 2 ;
 }
 
 
@@ -18,15 +13,15 @@ Game::Game(std::string stream) {
 }
 
 int Game::getNumberOfPlayersCap() const {
-    return numberOfPlayers_;
+    return numberOfPlayersCap_;
 }
 
 void Game::setNumberOfPlayersCap(int numberOfPlayers) {
-    numberOfPlayers_ = numberOfPlayers;
+    numberOfPlayersCap_ = numberOfPlayers;
 }
 
 bool Game::addPlayer(User user) {
-    if (this->players_.size() >= this->numberOfPlayers_)
+    if (this->players_.size() >= this->numberOfPlayersCap_)
         return false;
     Player player;
     player.userId = user.getId();
@@ -34,9 +29,14 @@ bool Game::addPlayer(User user) {
     return true;
 }
 
+std::vector<int> Game::getPlayersIds() const {
+    std::vector<int> retval;
+    for(auto& player : this->players_)
+        retval.emplace_back(player.userId);
+    return retval;
+}
+
 Piece Game::getStealPiece() {
-    if (!canStealPiece())
-        return Piece(-1, -1);
     std::random_device rd;
     int index = rd() % this->toStealPieces_.size();
     Piece piece = this->toStealPieces_[index];
@@ -44,33 +44,77 @@ Piece Game::getStealPiece() {
     return piece;
 }
 
-bool Game::putPieceToTheLeft(Piece piece) {
-    if (!canPutPieceToTheLeft(piece))
+bool Game::currentPlayerPutPieceToTheLeft(Piece piece) {
+    Piece flipablePiece(piece.serialize());
+    std::cout<<flipablePiece.serialize()<<"\n";
+    if (!currentPlayerCanPutPieceToTheLeft(flipablePiece)) {
+        flipablePiece.flip();
+        std::cout<<flipablePiece.serialize()<<"\n";
+        if (!currentPlayerCanPutPieceToTheLeft(flipablePiece)) {
+            fprintf(stderr, "ERROR, cant place piece in the board\n");
+            return false;
+        }
+    }
+
+    if (!removePieceToCurrentPlayer(piece)) {
+        fprintf(stderr, "ERROR, Current player dont have that piece\n");
         return false;
+    }
+
     this->inBoardPieces_.emplace(this->inBoardPieces_.begin(), piece);
+    nextTurn();
     return true;
 }
 
-bool Game::putPieceToTheRight(Piece piece) {
-    if (!canPutPieceToTheRight(piece))
+bool Game::currentPlayerPutPieceToTheRight(Piece piece) {
+    Piece flipablePiece(piece.serialize());
+    std::cout<<flipablePiece.serialize()<<"\n";
+    if (!currentPlayerCanPutPieceToTheRight(flipablePiece)) {
+        flipablePiece.flip();
+        std::cout<<flipablePiece.serialize()<<"\n";
+        if (!currentPlayerCanPutPieceToTheRight(flipablePiece)) {
+            fprintf(stderr, "ERROR, cant place piece in the board\n");
+            return false;
+        }
+    }
+
+    if (!removePieceToCurrentPlayer(piece)) {
+        fprintf(stderr, "ERROR, Current player dont have that piece\n");
         return false;
+    }
+
     this->inBoardPieces_.emplace_back(piece);
+    nextTurn();
     return true;
 }
 
-bool Game::canPutPieceToTheLeft(Piece piece) const {
-    return this->inBoardPieces_[0].isCompatible(piece);
+bool Game::currentPlayerCanPutPieceToTheLeft(Piece piece) const {
+    std::cout<<"board"<<this->inBoardPieces_[0].serialize()<<"player:"<<piece.serialize()<<(this->inBoardPieces_[0].getRight() == piece.getLeft())<<"\n";
+    if (currentPlayerHasPiece(piece))
+        return this->inBoardPieces_[0].getRight() == piece.getLeft();
+    return false;
 }
 
-bool Game::canPutPieceToTheRight(Piece piece) const {
-    return this->inBoardPieces_[this->inBoardPieces_.size() - 1].isCompatible(piece);
+bool Game::currentPlayerCanPutPieceToTheRight(Piece piece) const {
+    std::cout<<"board"<<this->inBoardPieces_[this->inBoardPieces_.size() - 1].serialize()<<"player:"<<piece.serialize()<<(this->inBoardPieces_[this->inBoardPieces_.size() - 1].getRight() == piece.getLeft())<<"\n";
+    if (currentPlayerHasPiece(piece))
+        return this->inBoardPieces_[this->inBoardPieces_.size() - 1].getRight() == piece.getLeft();
+    return false;
 }
 
-bool Game::canStealPiece() {
+bool Game::currentPlayerCanStealPiece() const {
+    if (currentPlayerCanPlace())
+        return false;
     return !this->toStealPieces_.empty();
 }
 
 void Game::startGame() {
+    for (int i = 1; i <= 6; ++i) {
+        for (int j = 1; j <= 6 ; ++j) {
+            this->toStealPieces_.emplace_back(Piece(i, j));
+        }
+    }
+
     for (auto &player : this->players_) {
         for (int i = 0; i < 7; ++i) {
             player.inHandPieces.emplace_back(this->getStealPiece());
@@ -141,7 +185,7 @@ std::string Game::serialize() const {
     }
     {
         stream += "|isFull:";
-        stream += this->players_.size() < this->numberOfPlayers_ ? std::to_string(0) : std::to_string(1);
+        stream += this->players_.size() < this->numberOfPlayersCap_ ? std::to_string(0) : std::to_string(1);
     }
 
     stream += "}";
@@ -158,15 +202,22 @@ bool Game::deserialize(std::string stream) {
         else if (std::get<0>(tuple) == "numberOfPlayers")
             this->setNumberOfPlayersCap(atoi(std::get<1>(tuple).c_str()));
 
-        else if (std::get<0>(tuple) == "inBoardPieces")
-            for (auto& pieceStream : this->getStreamsFromSerializedInput(std::get<1>(tuple).substr(1, std::get<1>(tuple).size() - 2)))
+        else if (std::get<0>(tuple) == "inBoardPieces") {
+            this->inBoardPieces_.clear();
+            for (auto &pieceStream : this->getStreamsFromSerializedInput(
+                    std::get<1>(tuple).substr(1, std::get<1>(tuple).size() - 2)))
                 this->inBoardPieces_.emplace_back(Piece(pieceStream));
+        }
 
-        else if (std::get<0>(tuple) == "toStealPieces")
+        else if (std::get<0>(tuple) == "toStealPieces") {
+            this->toStealPieces_.clear();
             for (auto& pieceStream : this->getStreamsFromSerializedInput(std::get<1>(tuple).substr(1, std::get<1>(tuple).size() - 2)))
                 this->toStealPieces_.emplace_back(Piece(pieceStream));
+        }
+
 
         else if (std::get<0>(tuple) == "players") {
+            this->players_.clear();
             Player* player;
             for (std::string &playerStream : this->getStreamsFromSerializedInput(std::get<1>(tuple).substr(1, std::get<1>(tuple).size() - 2))) {
                 player = new Player;
@@ -192,14 +243,14 @@ bool Game::deserialize(std::string stream) {
 
 void Game::prepareObjectForPlayer(int userId) {
     this->toStealPieces_.clear();
-    for (int i = 0; i < this->getNumberOfPlayersCap(); ++i) {
+    for (int i = 0; i < this->getNumberOfPlayers(); ++i) {
         if (this->players_[i].userId == userId)
-            this->players_.erase(this->players_.begin() + i);
+            this->players_[i].inHandPieces.clear();
     }
 }
 
 std::string Game::serializeForPlayer(int userId) const {
-    Game newGame = *this;
+    Game newGame (this->serialize());
     newGame.prepareObjectForPlayer(userId);
     return newGame.serialize();
 }
@@ -207,4 +258,105 @@ std::string Game::serializeForPlayer(int userId) const {
 int Game::getNumberOfPlayers() const {
     return this->players_.size();
 }
+
+bool Game::hasTurn(int userId) const {
+    for (auto& player : this->players_) {
+        if (player.userId == userId)
+            return player.hasTurn;
+    }
+    fprintf(stderr, "ERROR, player not in game, cant check for turn");
+    return false;
+}
+
+
+bool Game::currentPlayerCanPlace() const {
+    // gets the playing user
+    Player playingUser = this->players_[getCurrentPlayerIndex()];
+
+    for (Piece& inHandPiece : playingUser.inHandPieces) {
+        if (inHandPiece.isCompatible(this->inBoardPieces_[0]))
+            return true;
+        if (inHandPiece.isCompatible(this->inBoardPieces_[this->inBoardPieces_.size()-1]))
+            return true;
+    }
+    return false;
+}
+
+bool Game::currentPlayerHasPiece(Piece piece) const {
+    Player playingUser = this->players_[getCurrentPlayerIndex()];
+    bool has = false;
+    for (Piece& inHandPiece : playingUser.inHandPieces) {
+        if (inHandPiece == piece)
+            has = true;
+    }
+    piece.flip();
+    for (Piece& inHandPiece : playingUser.inHandPieces) {
+        if (inHandPiece == piece)
+            has = true;
+    }
+    return has;
+
+}
+
+bool Game::removePieceToCurrentPlayer(Piece piece) {
+    if (!currentPlayerHasPiece(piece))
+        return false;
+
+
+    for (int i = 0; i < this->players_[getCurrentPlayerIndex()].inHandPieces.size(); ++i) {
+        if (this->players_[getCurrentPlayerIndex()].inHandPieces[i] == piece){
+            this->players_[getCurrentPlayerIndex()].inHandPieces.erase(this->players_[getCurrentPlayerIndex()].inHandPieces.begin()+i);
+            std::cout<<"removing piece to the player\n";
+            return true;
+        }
+    }
+    return false;
+
+}
+
+bool Game::currentPlayerCanPass() const {
+    if (currentPlayerCanPlace())
+        return true;
+
+    if (currentPlayerCanStealPiece())
+        return true;
+
+    return false;
+}
+
+bool Game::currentPlayerSteal() {
+    if (!currentPlayerCanStealPiece())
+        return false;
+
+    this->players_[getCurrentPlayerIndex()].inHandPieces.emplace_back(getStealPiece());
+
+    nextTurn();
+    return true;
+}
+
+bool Game::currentPlayerPass() {
+    if (!currentPlayerCanPass())
+        return false;
+
+    Player playingUser = this->players_[getCurrentPlayerIndex()];
+
+    nextTurn();
+    return true;
+}
+
+void Game::nextTurn() {
+    Player playingUser = this->players_[getCurrentPlayerIndex()];
+}
+
+int Game::getCurrentPlayerIndex() const {
+    int currentPlayerIndex = -1;
+    Player playingUser;
+    for (int i = 0; i < this->getNumberOfPlayers(); ++i) {
+        if (this->players_[i].hasTurn) {
+            currentPlayerIndex = i;
+        }
+    }
+    return currentPlayerIndex;
+}
+
 

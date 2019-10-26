@@ -172,7 +172,14 @@ public:
     };
 
 
-
+    /**
+     * this function can behave unpredictably, but the object id is always correct, check the veracity of the data
+     * with the getById funciton
+     * @tparam ObjectType
+     * @param field
+     * @param value
+     * @return vector of filtered objects
+     */
     template <class ObjectType>
     std::vector<ObjectType> getByField(const std::string& field, const std::string& value) {
         sqlite3_exec(this->db_, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr);
@@ -216,11 +223,10 @@ public:
             querry += std::get<0>(tuples[i]) + " = '" + std::get<1>(tuples[i]) + "'";
         }
         querry += " where id is " + std::to_string(object.getId()) + ";";
-
         char *zErrMsg = nullptr;
         int rc;
         char *sql;
-        rc = sqlite3_exec(db_, querry.c_str(), selectCallback, &this->stream_, &zErrMsg);
+        rc = sqlite3_exec(db_, querry.c_str(), nullptr, &this->stream_, &zErrMsg);
         if( rc != SQLITE_OK ) {
             fprintf(stderr, "SQL error: %s\n", zErrMsg);
             sqlite3_free(zErrMsg);
