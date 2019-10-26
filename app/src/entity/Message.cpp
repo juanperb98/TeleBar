@@ -9,7 +9,17 @@ Message::Message(User user, std::string message) {
     this->message_ = message;
 }
 
+Message::Message() {
+    this->id_ = -1;
+    this->tableName_ = "message";
+    this->userId_ = -1;
+    this->username_ = "";
+    this->gameId_ = -1;
+    this->message_ = "";
+}
+
 Message::Message(std::string stream) {
+    this->id_ = -1;
     this->tableName_ = "message";
     this->deserialize(stream);
 }
@@ -37,7 +47,7 @@ std::string Message::serialize() const {
     stream += "id:" + std::to_string(this->getId()) + "|";
     stream += "userId:" + std::to_string(this->getUserId()) + "|";
     stream += "gameId:" + std::to_string(this->getGameId()) + "|";
-    stream += "message:" + this->getMessage();
+    stream += "message:[" + this->getMessage() + "]|";
     stream += "username:" + this->getUsername();
     stream += "}";
     return stream;
@@ -57,7 +67,7 @@ bool Message::deserialize(std::string stream) {
             this->gameId_=atoi(std::get<1>(tuple).c_str());
 
         else if (std::get<0>(tuple) == "message")
-            this->message_=std::get<1>(tuple);
+            this->message_=std::get<1>(tuple).substr(1, std::get<1>(tuple).size() - 2);
 
         else if (std::get<0>(tuple) == "username")
             this->username_=std::get<1>(tuple);
@@ -65,4 +75,6 @@ bool Message::deserialize(std::string stream) {
 
     return true;
 }
+
+
 

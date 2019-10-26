@@ -18,16 +18,37 @@ class Game : public ORMInterface{
     };
 
 private:
-    int numberOfPlayers_;
+    int numberOfPlayersCap_;
     std::vector<Piece> inBoardPieces_;
     std::vector<Player> players_;
     std::vector<Piece> toStealPieces_;
 
-public:
-    void debug(){
-        this->inBoardPieces_.emplace_back(this->getStealPiece());
-    }
+protected:
+    Piece getStealPiece();
 
+    bool removePieceToCurrentPlayer(Piece piece);
+
+    bool currentPlayerCanStealPiece() const;
+
+    bool currentPlayerCanPass() const;
+
+    bool currentPlayerCanPutPieceToTheLeft(Piece piece) const;
+
+    bool currentPlayerCanPutPieceToTheRight(Piece piece) const;
+
+    bool currentPlayerHasPiece(Piece piece) const;
+
+    /**
+     * checks if the current player can place a piece at the start or end of the board from it's hand
+     * @return true if the action can be made, false otherwise
+     */
+    bool currentPlayerCanPlace() const;
+
+    void nextTurn();
+
+    int getCurrentPlayerIndex() const;
+
+public:
     Game();
 
     explicit Game(std::string stream);
@@ -40,19 +61,19 @@ public:
 
     bool addPlayer(User user);
 
-    Piece getStealPiece();
+    std::vector<int> getPlayersIds() const;
 
-    bool canPutPieceToTheLeft(Piece piece) const;
+    bool currentPlayerPutPieceToTheLeft(Piece piece);
 
-    bool canPutPieceToTheRight(Piece piece) const;
+    bool currentPlayerPutPieceToTheRight(Piece piece);
 
-    bool putPieceToTheLeft(Piece piece);
+    bool currentPlayerSteal();
 
-    bool putPieceToTheRight(Piece piece);
-
-    bool canStealPiece();
+    bool currentPlayerPass();
 
     void startGame();
+
+    bool hasTurn(int userId) const;
 
     std::string serialize() const override;
 
@@ -61,8 +82,6 @@ public:
     void prepareObjectForPlayer(int userId);
 
     std::string serializeForPlayer(int userId) const;
-
-
 };
 
 #endif

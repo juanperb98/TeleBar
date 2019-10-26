@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-const int User::getUsername() const {
+const std::string User::getUsername() const {
     return username_;
 }
 
@@ -39,6 +39,7 @@ User::User(const std::string& token, const std::string& username, const std::str
     this->token_ = token;
     this->username_ = username;
     this->password_ = password;
+    this->gameId_ = -1;
 }
 
 User::User() {
@@ -47,10 +48,11 @@ User::User() {
     this->token_ = "";
     this->username_ = "";
     this->password_ = "";
+    this->gameId_ = -1;
 }
 
 std::string User::serialize() const {
-    return "{id:"+ std::to_string(this->getId()) +"|token:" + this->token_ + "|username:" + this->username_ + "|password:" + this->password_ + "}";
+    return "{id:"+ std::to_string(this->getId()) +"|token:" + this->token_ + "|username:" + this->username_ + "|password:" + this->password_ + "|gameId:" + std::to_string(this->gameId_) + "}";
 }
 
 bool User::deserialize(std::string stream) {
@@ -62,6 +64,8 @@ bool User::deserialize(std::string stream) {
             this->id_ = atoi(std::get<1>(tuple).c_str()) ;
         else if (std::get<0>(tuple) == "token")
             this->setToken(std::get<1>(tuple));
+        else if (std::get<0>(tuple) == "gameId")
+            this->setGameId(atoi(std::get<1>(tuple).c_str()));
         else if (std::get<0>(tuple) == "username")
             this->setUsername(std::get<1>(tuple));
         else if (std::get<0>(tuple) == "password")

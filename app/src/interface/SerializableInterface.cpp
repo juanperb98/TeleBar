@@ -3,13 +3,12 @@
 
 std::vector<std::tuple<std::string, std::string>> SerializableInterface::getTuplesFromStream(const std::string& stream) const {
     std::string input = stream;
-
     if (input[0] != '{') {
-        fprintf(stderr, "ERROR, could not deserialize User, expected '{' at the start of stream");
+        fprintf(stderr, "ERROR, could not deserialize object, expected '{' at the start of stream\n");
         return *(new std::vector<std::tuple<std::string, std::string>>());
     }
     if (input[input.size() - 1] != '}') {
-        fprintf(stderr, "ERROR, could not deserialize User, expected '}' at the end of stream");
+        fprintf(stderr, "ERROR, could not deserialize object, expected '}' at the end of stream\n");
         return *(new std::vector<std::tuple<std::string, std::string>>());
     }
 
@@ -67,7 +66,7 @@ std::vector<std::tuple<std::string, std::string>> SerializableInterface::getTupl
 
         tagDelimiterIndex = field.find(':');
         if (tagDelimiterIndex == std::string::npos) {
-            fprintf(stderr, "ERROR, could not deserialize object, expected ':' as tag:value separator");
+            fprintf(stderr, "ERROR, could not deserialize object, expected ':' as tag:value separator\n");
             return *(new std::vector<std::tuple<std::string, std::string>>());
         }
 
