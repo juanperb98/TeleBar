@@ -11,6 +11,14 @@ std::string serverSetBoardHandler(ORM &orm, User user, std::string payload) {
     if (!game.hasTurn(user.getId()))
         return "WAIT,not your turn";
 
+    if (game.hasEnded()) {
+        for(auto& player : game.getPlayers()) {
+            orm.save(UserNotification(player.userId, game.getId(), game.getTableName(), std::string(GAME_EVENT_THE_GAME_HAS_ENDED) , game.serialize()));
+        }
+        orm.remove(game);
+        return std::string("END,the game has ended");
+    }
+
     GameAction action (payload);
 
     if (action.getAction() == GAME_ACTION_PUT_PIECE_TO_THE_RIGHT) {

@@ -13,7 +13,8 @@
 #define GAME_ACTION_STEAL_PIECE "stealPiece"
 #define GAME_ACTION_PASS "pass"
 
-#define GAME_EVENT_THE_GAME_HAS_STARTED "theGameHasStarted"
+#define GAME_EVENT_THE_GAME_HAS_STARTED "theGameHasStarted" // unused
+#define GAME_EVENT_THE_GAME_HAS_ENDED "theGameHasEnded"
 #define GAME_EVENT_NEW_MESSAGE "newMessage"
 
 #endif

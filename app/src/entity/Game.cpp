@@ -379,12 +379,58 @@ const std::vector<Piece> &Game::getInBoardPieces() const {
     return inBoardPieces_;
 }
 
-const std::vector<Game::Player> &Game::getPlayers() const {
+const std::vector<Player> &Game::getPlayers() const {
     return players_;
 }
 
 const std::vector<Piece> &Game::getToStealPieces() const {
     return toStealPieces_;
+}
+
+bool Game::hasEnded() const {
+    Game auxGame(this->serialize());
+
+    for (const auto& player : auxGame.getPlayers()) {
+        if (player.inHandPieces.empty())
+            return true;
+    }
+
+    for (int i = 0; i < this->getNumberOfPlayers(); ++i) {
+        if (auxGame.currentPlayerCanPlace()
+            || auxGame.currentPlayerCanStealPiece()
+            || currentPlayerCanPass()) {
+
+            return false;
+        }
+        auxGame.nextTurn();
+    }
+
+    return false;
+}
+
+Player Game::getWinningPlayer() const {
+
+    for (const auto& player : this->getPlayers()) {
+        if (player.inHandPieces.empty())
+            return player;
+    }
+
+    int winningPlayerIndex = 0;
+    int winningPlayerScore = 999999999;
+    int score = 0;
+
+    for (int i = 0; i < this->getNumberOfPlayers(); ++i) {
+        score = 0;
+        for (int j = 0; j < this->players_[i].inHandPieces.size(); ++j) {
+            score += this->players_[i].inHandPieces[j].getValue();
+        }
+        if (score < winningPlayerScore) {
+            winningPlayerScore = score;
+            winningPlayerIndex = i;
+        }
+    }
+
+    return this->getPlayers()[winningPlayerIndex];
 }
 
 
