@@ -1,4 +1,7 @@
 #include <iostream>
+#include <unistd.h>
+#include <signal.h>
+
 
 #include <telebar/kernel/Client.hpp>
 #include <telebar/entity/User.hpp>
@@ -11,12 +14,18 @@
 #include <telebar/entity/GameAction.hpp>
 #include <telebar/userInterface/handlers/clientHandler.hpp>
 #include <telebar/userInterface/printers/menuPrinter.hpp>
-#include <unistd.h>
+
+
+
+Client client(SERVER_IP, SERVER_PORT);
+
+
+void sigIntHandler(int signum);
 
 
 int main(int argc, char const *argv[]) {
+    signal(SIGINT, sigIntHandler);
     // create the connection to the server
-    Client client(SERVER_IP, SERVER_PORT);
     std::cout<<client.listen()<<"\n";
     std::string message, retval, payload;
     bool exit = false;
@@ -125,102 +134,11 @@ int main(int argc, char const *argv[]) {
             sleep(1);
         }
     }
-
-
-
-
-    handleExit(client);
-
-/*
-
-    // log in
-
-    std::string aux;
-    std::cout << "enter your username: ";
-    payload = "{username:";
-    std::cin >> aux;
-    payload += aux;
-    std::cout<<"enter your password: ";
-    payload += "|password:";
-    std::cin>>aux;
-    payload += aux;
-    payload += "}";
-    std::cout<<payload<<"\n";
-    message = std::string("null") + "," + SERVER_ACTION_LOGIN + "," + payload;
-    client.sendMessage(message);
-    retval = client.listen();
-    std::cout<<retval<<"\n";
-    user.deserialize(retval.substr(3, retval.size()));
-    std::cout<<user.serialize()<<"\n";
-
-
-
-    // join the game
-    std::cout<<"enter the desired number of players: ";
-    std::cin>>payload;
-
-    message = user.getToken() + "," + GAME_ACTION_START_GAME + "," + payload;
-    client.sendMessage(message);
-    retval = client.listen();
-    std::cout<<retval<<"\n";
-
-
-    // wait for the game to start
-    ready = false;
-    while (not ready) {
-        message = user.getToken() + "," + GAME_ACTION_GET_UPDATE + "," ;
-        client.sendMessage(message);
-        retval = client.listen();
-        if (retval == "NONE")
-            continue;
-        std::cout<<retval<<"\n";
-        notification.deserialize(retval.substr(3, retval.size()));
-        if (notification.getNotification() == GAME_EVENT_THE_GAME_HAS_STARTED)
-            ready = true;
-    }
-
-
-    // show the game to the player
-    message = user.getToken() + "," + GAME_ACTION_GET_BOARD + ",";
-    client.sendMessage(message);
-    retval = client.listen();
-    std::cout<<retval<<"\n";
-    game.deserialize(retval.substr(3, retval.size()));
-    printGame(game, messages);
-
-
-    // make a move
-    std::cout<<"Enter your piece\n\t Left: ";
-    payload = "{L:";
-    std::cin>>aux;
-    payload += aux;
-    std::cout<<"\tRight: ";
-    payload += "|R:";
-    std::cin>>aux;
-    payload += aux;
-    payload += "}";
-    std::cout<<"where to put it? [L/R]: ";
-    std::cin>>aux;
-
-    std::cout<<payload<<"\n";
-
-    if (aux == "L")
-        gameAction = new GameAction(GAME_ACTION_PUT_PIECE_TO_THE_LEFT, Piece(payload));
-    else
-        gameAction = new GameAction(GAME_ACTION_PUT_PIECE_TO_THE_RIGHT, Piece(payload));
-
-    message = user.getToken() + "," + GAME_ACTION_SEND_BOARD_MOVEMENT + "," + gameAction->serialize();
-
-    client.sendMessage(message);
-    retval = client.listen();
-    std::cout<<retval<<"\n";
-    game.deserialize(retval.substr(3, retval.size()));
-    printGame(game, messages);
-
-
-    client.closeConnection();*/
 }
 
 
 
 
+void sigIntHandler (int signum){
+    client.closeConnection();
+}
