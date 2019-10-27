@@ -11,10 +11,12 @@
 
 
 class Game : public ORMInterface{
+
     struct Player{
         int userId = -1;
         std::vector<Piece> inHandPieces;
         bool hasTurn = false;
+        std::string username = "";
     };
 
 private:
@@ -35,8 +37,6 @@ protected:
     bool currentPlayerCanPutPieceToTheLeft(Piece piece) const;
 
     bool currentPlayerCanPutPieceToTheRight(Piece piece) const;
-
-    bool currentPlayerHasPiece(Piece piece) const;
 
     /**
      * checks if the current player can place a piece at the start or end of the board from it's hand
@@ -71,6 +71,12 @@ public:
 
     bool currentPlayerPass();
 
+    const std::vector<Piece> &getInBoardPieces() const;
+
+    const std::vector<Player> &getPlayers() const;
+
+    bool currentPlayerHasPiece(Piece piece) const;
+
     void startGame();
 
     bool hasTurn(int userId) const;
@@ -80,6 +86,8 @@ public:
     bool deserialize(std::string stream) override;
 
     void prepareObjectForPlayer(int userId);
+
+    const std::vector<Piece> &getToStealPieces() const;
 
     std::string serializeForPlayer(int userId) const;
 };

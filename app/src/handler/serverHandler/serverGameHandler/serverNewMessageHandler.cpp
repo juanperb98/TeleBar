@@ -10,11 +10,8 @@ std::string serverNewMessageHandler(ORM &orm, User user, std::string payload) {
     int messageId = orm.save(message);
 
     // create the notification
-    std::vector<User> gameUsers = orm.getByField<User>("gameId", std::to_string(user.getGameId()));
-
-    for (User& gameUser : gameUsers) {
-        orm.save(UserNotification(user.getId(), messageId, message.getTableName(), GAME_EVENT_NEW_MESSAGE));
+    for (auto& player : game.getPlayers()) {
+        orm.save(UserNotification(player.userId, messageId, message.getTableName(), GAME_EVENT_NEW_MESSAGE));
     }
-
     return "OK,message created";
 }

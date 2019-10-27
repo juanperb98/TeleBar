@@ -46,7 +46,8 @@ std::string serverStartGameHandler(ORM &orm, User user, std::string payload) {
     if (game.getNumberOfPlayersCap() == game.getNumberOfPlayers()) {
         game.startGame();
         for (int& playerId : game.getPlayersIds()) {
-            orm.save(UserNotification(playerId, game.getId(), game.getTableName(), GAME_EVENT_THE_GAME_HAS_STARTED));
+            // not needed in the current client
+            // orm.save(UserNotification(playerId, game.getId(), game.getTableName(), GAME_EVENT_THE_GAME_HAS_STARTED));
         }
         orm.update(game);
         return std::string("OK,") + game.serializeForPlayer(user.getId());

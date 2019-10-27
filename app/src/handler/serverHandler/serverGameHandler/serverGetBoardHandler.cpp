@@ -33,7 +33,7 @@ std::string serverGetBoardHandler(ORM &orm, User user, std::string payload) {
     if (game.getId() == -1)
         return "ERROR,game not found, try joining a game";
     else
-        return std::string("OK") + game.serializeForPlayer(user.getId());;
+        return std::string("OK,") + game.serializeForPlayer(user.getId());;
 }
 
 

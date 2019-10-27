@@ -46,7 +46,7 @@ User getUserFromToken(ORM& orm, const std::string& token) {
     if (users.size() != 1)
         return User();
     else
-        return users[0];
+        return orm.getById<User>(users[0].getId());
 }
 
 std::string logInHandler(ORM& orm, const std::string &loginPayload) {
