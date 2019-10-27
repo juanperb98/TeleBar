@@ -287,6 +287,14 @@ void handleMessage(Client& client, User& user, std::vector<Message>& messages, i
         messages.emplace_back(message);
 }
 
+
+void handleGameEnd(Client& client, User& user, UserNotification notification) {
+    Game game(notification.getPayload());
+    printGame(game);
+    std::cout<<"\nThe winner is "<<game.getWinningPlayer().username<<"!";
+}
+
+
 bool handleNotification(Client& client, User& user, std::vector<Message>& messages) {
     std::string payload = user.getToken() + "," + GAME_ACTION_GET_UPDATE + ",";
     client.sendMessage(payload);
@@ -301,6 +309,10 @@ bool handleNotification(Client& client, User& user, std::vector<Message>& messag
 
     if (notification.getNotification() == GAME_EVENT_NEW_MESSAGE)
         handleMessage(client, user, messages, notification.getRelatedEntityId());
+
+    else if (notification.getNotification() == GAME_EVENT_THE_GAME_HAS_ENDED)
+        handleGameEnd(client, user, notification);
+
     return true;
 }
 
