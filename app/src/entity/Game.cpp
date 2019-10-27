@@ -112,14 +112,14 @@ bool Game::currentPlayerCanStealPiece() const {
 }
 
 void Game::startGame() {
-    for (int i = 0; i <= 6; ++i) {
-        for (int j = 0; j <= 6 ; ++j) {
+    for (int i = 0; i <= 2; ++i) {
+        for (int j = 0; j <= 2 ; ++j) {
             this->toStealPieces_.emplace_back(Piece(i, j));
         }
     }
 
     for (auto &player : this->players_) {
-        for (int i = 0; i < 7; ++i) {
+        for (int i = 0; i < 1; ++i) {
             player.inHandPieces.emplace_back(this->getStealPiece());
         }
     }

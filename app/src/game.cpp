@@ -35,9 +35,10 @@ int main(int argc, char const *argv[]) {
     std::vector<Message> messages;
     User user;
     int option;
+    std::string trash;
 
     // clears the pending notifications
-    while (handleNotification(client, user, messages));
+    while (handleNotification(client, user, messages, game));
     messages.clear();
 
 
@@ -73,6 +74,8 @@ int main(int argc, char const *argv[]) {
         // check if the user was in a game
         game = getUserGame(client, user);
 
+        std::cout<<"game:"<<game.serialize()<<"\n";
+
         // the user is not in a game
         if (game.getId() == -1)
         {
@@ -98,9 +101,11 @@ int main(int argc, char const *argv[]) {
         }
         // the user is in a game, playing or searching
 
-
-        // checks for new messages
-        while (handleNotification(client, user, messages));
+        handleNotification(client, user, messages, game);
+        handleNotification(client, user, messages, game);
+        handleNotification(client, user, messages, game);
+        handleNotification(client, user, messages, game);
+        handleNotification(client, user, messages, game);
 
 
         // the player is currently playing
@@ -108,7 +113,6 @@ int main(int argc, char const *argv[]) {
             // the user has turn
             if (game.hasTurn(user.getId())) {
                 handleGameAction(client, game, user, messages);
-                continue;
             }
             // the user does not has turn
             else {

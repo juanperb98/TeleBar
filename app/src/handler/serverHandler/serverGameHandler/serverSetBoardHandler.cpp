@@ -2,6 +2,7 @@
 
 std::string serverSetBoardHandler(ORM &orm, User user, std::string payload) {
     Game game = orm.getById<Game>(user.getGameId());
+    std::string retval;
 
     // ckecks if the user is in game
     if (game.getId() == -1)
@@ -11,44 +12,49 @@ std::string serverSetBoardHandler(ORM &orm, User user, std::string payload) {
     if (!game.hasTurn(user.getId()))
         return "WAIT,not your turn";
 
-    if (game.hasEnded()) {
-        for(auto& player : game.getPlayers()) {
-            orm.save(UserNotification(player.userId, game.getId(), game.getTableName(), std::string(GAME_EVENT_THE_GAME_HAS_ENDED) , game.serialize()));
-        }
-        orm.remove(game);
-        return std::string("END,the game has ended");
-    }
-
     GameAction action (payload);
 
     if (action.getAction() == GAME_ACTION_PUT_PIECE_TO_THE_RIGHT) {
         if (!game.currentPlayerPutPieceToTheRight(action.getPiece()))
             return "ERROR,cant put piece there";
         orm.update(game);
-        return std::string("OK,") + game.serializeForPlayer(user.getId());
+        retval = std::string("OK,") + game.serializeForPlayer(user.getId());
     }
 
-    if (action.getAction() == GAME_ACTION_PUT_PIECE_TO_THE_LEFT) {
+    else if (action.getAction() == GAME_ACTION_PUT_PIECE_TO_THE_LEFT) {
         if (!game.currentPlayerPutPieceToTheLeft(action.getPiece()))
             return "ERROR,cant put piece there";
         orm.update(game);
-        return std::string("OK,") + game.serializeForPlayer(user.getId());
+        retval = std::string("OK,") + game.serializeForPlayer(user.getId());
     }
 
-    if (action.getAction() == GAME_ACTION_PASS) {
+    else if (action.getAction() == GAME_ACTION_PASS) {
         if (!game.currentPlayerPass())
             return "ERROR,you cant pass this turn";
         orm.update(game);
-        return std::string("OK,") + game.serializeForPlayer(user.getId());
+        retval = std::string("OK,") + game.serializeForPlayer(user.getId());
     }
 
 
-    if (action.getAction() == GAME_ACTION_STEAL_PIECE) {
+    else if (action.getAction() == GAME_ACTION_STEAL_PIECE) {
         if (!game.currentPlayerSteal())
             return "ERROR,you cant steal";
         orm.update(game);
-        return std::string("OK,") + game.serializeForPlayer(user.getId());
+        retval = std::string("OK,") + game.serializeForPlayer(user.getId());
     }
 
-    return action.serialize();
+    if (game.hasEnded()) {
+
+        User gameUser;
+        for (auto& player : game.getPlayers()) {
+            gameUser = orm.getById<User>(player.userId);
+            gameUser.setGameId(-1);
+            orm.update(gameUser);
+        }
+        for (auto& player : game.getPlayers()) {
+            orm.save(UserNotification(player.userId, game.getId(), game.getTableName(), GAME_EVENT_THE_GAME_HAS_ENDED));
+        }
+
+    }
+    return retval;
 }

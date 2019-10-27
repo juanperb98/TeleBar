@@ -254,7 +254,6 @@ void handleGameWaiting(Client& client, Game& game, User& user, std::vector<Messa
     std::string input;
     getline(std::cin, input);
     if (input == ""){
-        std::cout<<"just enter\n";
         return;
     }
 
@@ -263,9 +262,8 @@ void handleGameWaiting(Client& client, Game& game, User& user, std::vector<Messa
     std::string retval = client.listen();
     std::string statusCode = retval.substr(0,retval.find(','));
     std::string error =  retval.substr(retval.find(',') + 1, retval.size());
-    if (statusCode != "OK")
+    if (statusCode != "OK" && statusCode != "END")
         fprintf(stderr, "%s", error.c_str());
-
 }
 
 
@@ -288,32 +286,37 @@ void handleMessage(Client& client, User& user, std::vector<Message>& messages, i
 }
 
 
-void handleGameEnd(Client& client, User& user, UserNotification notification) {
-    Game game(notification.getPayload());
+void handleGameEnd(Client& client, User& user, Game& game) {
     printGame(game);
     std::cout<<"\nThe winner is "<<game.getWinningPlayer().username<<"!";
+    std::cout<<"\n\npress enter to continue.\n";
+    user.setGameId(-1);
+    std::string input;
+    getline(std::cin, input);
 }
 
 
-bool handleNotification(Client& client, User& user, std::vector<Message>& messages) {
-    std::string payload = user.getToken() + "," + GAME_ACTION_GET_UPDATE + ",";
+bool handleNotification(Client& client, User& user, std::vector<Message>& messages, Game& game) {
+    std::string payload = user.getToken() + "," + GAME_ACTION_GET_UPDATE + "," + std::to_string(user.getId());
     client.sendMessage(payload);
     std::string retval = client.listen();
     std::string statusCode = retval.substr(0,retval.find(','));
     std::string data =  retval.substr(retval.find(',') + 1, retval.size());
-    if (statusCode != "OK") {
-        fprintf(stderr, "%s", data.c_str());
-        return false;
-    }
+
     UserNotification notification(data);
 
-    if (notification.getNotification() == GAME_EVENT_NEW_MESSAGE)
+    std::cout<<notification.serialize()<<"\n";
+
+    if (notification.getNotification() == GAME_EVENT_NEW_MESSAGE) {
         handleMessage(client, user, messages, notification.getRelatedEntityId());
+        return true;
+    }
+    else if (notification.getNotification() == GAME_EVENT_THE_GAME_HAS_ENDED) {
+        handleGameEnd(client, user, game);
+        return true;
+    }
+    return false;
 
-    else if (notification.getNotification() == GAME_EVENT_THE_GAME_HAS_ENDED)
-        handleGameEnd(client, user, notification);
-
-    return true;
 }
 
 
