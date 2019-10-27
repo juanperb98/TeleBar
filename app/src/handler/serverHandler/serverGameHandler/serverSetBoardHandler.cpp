@@ -43,18 +43,5 @@ std::string serverSetBoardHandler(ORM &orm, User user, std::string payload) {
         retval = std::string("OK,") + game.serializeForPlayer(user.getId());
     }
 
-    if (game.hasEnded()) {
-
-        User gameUser;
-        for (auto& player : game.getPlayers()) {
-            gameUser = orm.getById<User>(player.userId);
-            gameUser.setGameId(-1);
-            orm.update(gameUser);
-        }
-        for (auto& player : game.getPlayers()) {
-            orm.save(UserNotification(player.userId, game.getId(), game.getTableName(), GAME_EVENT_THE_GAME_HAS_ENDED));
-        }
-
-    }
     return retval;
 }
