@@ -8,16 +8,16 @@
 #include <vector>
 #include <random>
 
-
+struct Player{
+    int userId = -1;
+    std::vector<Piece> inHandPieces;
+    bool hasTurn = false;
+    std::string username = "";
+};
 
 class Game : public ORMInterface{
 
-    struct Player{
-        int userId = -1;
-        std::vector<Piece> inHandPieces;
-        bool hasTurn = false;
-        std::string username = "";
-    };
+
 
 private:
     int numberOfPlayersCap_;
@@ -90,6 +90,10 @@ public:
     const std::vector<Piece> &getToStealPieces() const;
 
     std::string serializeForPlayer(int userId) const;
+
+    bool hasEnded() const;
+
+    Player getWinningPlayer() const;
 };
 
 #endif

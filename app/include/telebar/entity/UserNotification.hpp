@@ -7,11 +7,12 @@ class UserNotification : public ORMInterface {
 private:
     std::string notification_;
     std::string relatedEntityName_;
+    std::string payload_;
     int relatedEntityId_;
     int relatedUserId_;
 
 public:
-    UserNotification(int userId, int entityId, std::string entityName, std::string notification);
+    UserNotification(int userId, int entityId, std::string entityName, std::string notification, std::string payload = "");
 
     UserNotification(std::string stream);
 
@@ -26,6 +27,8 @@ public:
     int getRelatedUserId() const;
 
     std::string serialize() const override;
+
+    const std::string &getPayload() const;
 
     bool deserialize(std::string stream) override;
 };

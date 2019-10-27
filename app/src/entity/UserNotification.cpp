@@ -1,12 +1,13 @@
 #include <telebar/entity/UserNotification.hpp>
 
-UserNotification::UserNotification(int userId, int entityId, std::string entityName, std::string notification) {
+UserNotification::UserNotification(int userId, int entityId, std::string entityName, std::string notification, std::string payload) {
     this->id_ = -1;
     this->tableName_ = "userNotification";
     this->relatedUserId_ = userId;
     this->relatedEntityId_ = entityId;
     this->relatedEntityName_ = entityName;
     this->notification_ = notification;
+    this->payload_ = payload;
 }
 
 UserNotification::UserNotification() {
@@ -48,7 +49,8 @@ std::string UserNotification::serialize() const {
     stream += "relatedUserId:" + std::to_string(this->getRelatedUserId()) + "|";
     stream += "relatedEntityId:" + std::to_string(this->getRelatedEntityId()) + "|";
     stream += "relatedEntityName:" + this->getRelatedEntityName() + "|";
-    stream += "notification:" + this->getNotification();
+    stream += "notification:" + this->getNotification() + "|";
+    stream += "payload:" + this->getPayload();
 
     stream += "}";
     return stream;
@@ -72,9 +74,16 @@ bool UserNotification::deserialize(std::string stream) {
 
         else if (std::get<0>(tuple) == "notification")
             this->notification_=std::get<1>(tuple);
+
+        else if (std::get<0>(tuple) == "payload")
+            this->payload_=std::get<1>(tuple);
     }
 
     return true;
+}
+
+const std::string &UserNotification::getPayload() const {
+    return payload_;
 }
 
 
